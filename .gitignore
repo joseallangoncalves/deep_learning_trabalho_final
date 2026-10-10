@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Data & Models (Heavy binary files)
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.gz
+*.keras
+*.h5
+*.pt
+*.pth
+*.pkl
+
+# Optuna SQLite Database
+results/*.db
+results/*.sqlite
+results/*.sqlite3
+*.db-journal
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

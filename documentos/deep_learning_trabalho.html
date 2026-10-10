@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Técnico e Guia Metodológico: Deep Learning APLICADO AO VRA / ANAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --board: #f3f5f7;
+  --surface: #ffffff;
+  --edge: #d6dce2;
+  --ink: #1f2328;
+  --muted: #56606b;
+  --marker: #1c4fa0;
+  --marker-tint: #e8eef8;
+  --code: #eef2f5;
+  --warn: #8f3a12;
+  --warn-tint: #fbefe7;
+  --success: #1e7e34;
+  --success-tint: #eafaf1;
+  --purple: #6b21a8;
+  --purple-tint: #f3e8ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --board: #15181c;
+    --surface: #1c2025;
+    --edge: #2e353d;
+    --ink: #e3e7eb;
+    --muted: #9aa4ae;
+    --marker: #86a9ec;
+    --marker-tint: #1e2a3d;
+    --code: #20252b;
+    --warn: #f0a77f;
+    --warn-tint: #33241c;
+    --success: #5cd685;
+    --success-tint: #193022;
+    --purple: #c084fc;
+    --purple-tint: #2e1065;
+  }
+}
+
+:root[data-theme="dark"] {
+  --board: #15181c;
+  --surface: #1c2025;
+  --edge: #2e353d;
+  --ink: #e3e7eb;
+  --muted: #9aa4ae;
+  --marker: #86a9ec;
+  --marker-tint: #1e2a3d;
+  --code: #20252b;
+  --warn: #f0a77f;
+  --warn-tint: #33241c;
+  --success: #5cd685;
+  --success-tint: #193022;
+  --purple: #c084fc;
+  --purple-tint: #2e1065;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--board);
+  color: var(--ink);
+  font: 17px/1.65 "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a { color: var(--marker); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--marker); outline-offset: 2px; border-radius: 3px; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
+
+/* Top Control Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--edge);
+}
+.theme-toggle {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  color: var(--ink);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+header { padding: 1.5rem 0 1.5rem; }
+h1 {
+  font-family: "Kalam", "Comic Sans MS", cursive;
+  font-weight: 700;
+  font-size: clamp(2.1rem, 4.6vw, 3.2rem);
+  line-height: 1.1;
+  margin: 0 0 0.6rem;
+  max-width: 35ch;
+}
+.lede { color: var(--muted); max-width: 85ch; margin: 0 0 1.8rem; font-size: 1.08rem; }
+
+/* SVG Board Area */
+.board {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-bottom: 12px solid var(--edge);
+  border-radius: 12px;
+  padding: 1.2rem;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.board svg { display: block; min-width: 900px; width: 100%; height: auto; }
+.board figcaption { color: var(--muted); font-size: 0.9rem; padding: 0.6rem 0.4rem 0; text-align: center; }
+.hand { font-family: "Kalam", "Comic Sans MS", cursive; }
+
+/* Color utilities for SVG */
+.s-ink { stroke: var(--ink); } .f-ink { fill: var(--ink); }
+.s-blue { stroke: var(--marker); } .f-blue { fill: var(--marker); }
+.s-warn { stroke: var(--warn); } .f-warn { fill: var(--warn); }
+.s-purple { stroke: var(--purple); } .f-purple { fill: var(--purple); }
+
+.grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 2.5rem; padding: 2rem 0 5rem; }
+
+nav.toc { position: sticky; top: 1.2rem; align-self: start; font-size: 0.92rem; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+nav.toc li { counter-increment: s; margin: 0.2rem 0; }
+nav.toc a { display: flex; gap: 0.55rem; text-decoration: none; color: var(--ink); padding: 0.35rem 0.5rem; border-radius: 5px; }
+nav.toc a::before { content: counter(s); color: var(--marker); font-family: "Kalam", cursive; font-weight: 700; min-width: 1.4rem; }
+nav.toc a:hover { background: var(--marker-tint); }
+nav.toc .toc-title { font-family: "Kalam", cursive; font-size: 1.25rem; margin: 0 0 0.4rem 0.5rem; font-weight: 700; }
+
+article { max-width: 82ch; min-width: 0; }
+section { margin-bottom: 3.5rem; scroll-margin-top: 1.5rem; }
+
+h2 {
+  font-family: "Kalam", "Comic Sans MS", cursive;
+  font-weight: 700;
+  font-size: 2.05rem;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.35rem;
+}
+h2::after {
+  content: "";
+  position: absolute;
+  left: -0.2rem;
+  right: -0.6rem;
+  bottom: 0;
+  height: 3px;
+  background: var(--marker);
+  border-radius: 3px;
+  transform: rotate(-1deg);
+}
+
+h3 { font-size: 1.25rem; margin: 2rem 0 0.6rem; color: var(--ink); }
+h4 { font-size: 1.05rem; margin: 1.5rem 0 0.4rem; color: var(--ink); }
+
+p, li { max-width: 78ch; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.35rem 0; }
+
+blockquote { margin: 1rem 0; padding: 0.6rem 1.2rem; border-left: 4px solid var(--edge); color: var(--muted); font-style: italic; background: var(--code); border-radius: 0 6px 6px 0; }
+code { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-size: 0.88em; background: var(--code); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid var(--edge); }
+pre { font-family: "JetBrains Mono", monospace; background: var(--code); border: 1px solid var(--edge); border-radius: 8px; padding: 1.1rem; overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 1.2rem 0; }
+
+.note, .warn, .info, .purple-box { padding: 0.9rem 1.2rem; border-radius: 0 8px 8px 0; margin: 1.2rem 0; }
+.note { border-left: 4px solid var(--marker); background: var(--marker-tint); }
+.warn { border-left: 4px solid var(--warn); background: var(--warn-tint); }
+.info { border-left: 4px solid var(--success); background: var(--success-tint); }
+.purple-box { border-left: 4px solid var(--purple); background: var(--purple-tint); }
+
+.tbl { overflow-x: auto; margin: 1.2rem 0 1.8rem; border: 1px solid var(--edge); border-radius: 8px; background: var(--surface); box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--edge); }
+th { background: var(--code); font-weight: 700; color: var(--ink); }
+tr:last-child td { border-bottom: none; }
+
+.formula-box {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-left: 4px solid var(--marker);
+  border-radius: 8px;
+  padding: 1.1rem 1.4rem;
+  margin: 1.2rem 0;
+  font-size: 1.08rem;
+  line-height: 1.8;
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  overflow-x: auto;
+}
+.formula-highlight { font-weight: 700; color: var(--marker); font-size: 1.15rem; }
+
+math {
+  font-family: "Atkinson Hyperlegible", "Cambria Math", "STIXTwoMath", serif;
+  font-size: 1.12em;
+}
+.m-var { font-style: italic; font-weight: 600; color: var(--ink); }
+.m-op { margin: 0 0.25rem; font-weight: 400; }
+.m-vec { font-weight: 700; font-style: normal; color: var(--marker); }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  nav.toc { position: static; background: var(--surface); border: 1px solid var(--edge); border-radius: 8px; padding: 1rem; }
+  h2 { font-size: 1.75rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top-bar">
+    <span style="font-family:'Kalam', cursive; font-weight:700; font-size:1.1rem; color:var(--marker);">Deep Learning • VRA / ANAC • Dados Abertos</span>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" aria-label="Alternar tema">
+      <span>🌓</span> <span id="themeLabel">Alternar Tema</span>
+    </button>
+  </div>
+
+  <header>
+    <h1>Modelagem, Hiperparametrização e Avaliação Prática em Deep Learning</h1>
+    <p class="lede">Guia Metodológico Completo e Relatório Técnico para a disciplina de Deep Learning. Estruturado para o desenvolvimento experimental com o dataset de Voo Regular Ativo (VRA/ANAC), contemplando as 4 Frentes Tecnológicas (MLP, RNN, CNN, Autoencoders), busca bayesiana com Optuna, prevenção de vazamento de dados e protocolo de avaliação.</p>
+    
+    <figure class="board" style="margin:0">
+      <svg viewBox="0 0 1150 480" role="img" aria-labelledby="board-title">
+        <title id="board-title">Sintese Grafica do Pipeline de Deep Learning com Dados VRA/ANAC</title>
+        <defs>
+          <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="var(--marker)" stroke-width="2"/>
+          </marker>
+          <marker id="arr-warn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="var(--warn)" stroke-width="2"/>
+          </marker>
+          <marker id="arr-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="var(--purple)" stroke-width="2"/>
+          </marker>
+        </defs>
+
+        <!-- PAINEL 1: ENGENHARIA DE DADOS E VRA -->
+        <g transform="translate(10, 10)">
+          <rect x="10" y="10" width="350" height="440" rx="10" fill="var(--surface)" stroke="var(--edge)" stroke-width="2"/>
+          <text x="185" y="38" text-anchor="middle" class="hand f-blue" font-size="18" font-weight="700">Painel 1: Portal VRA / ANAC</text>
+          
+          <rect x="30" y="65" width="310" height="75" rx="6" fill="var(--code)" stroke="var(--edge)" stroke-width="1.5"/>
+          <text x="185" y="88" text-anchor="middle" class="hand f-ink" font-size="14" font-weight="700">Fontes Brutas VRA (Dados Abertos)</text>
+          <text x="185" y="106" text-anchor="middle" class="hand f-muted" font-size="12">• Horários Previstos vs. Reais (Partida/Chegada)</text>
+          <text x="185" y="122" text-anchor="middle" class="hand f-muted" font-size="12">• ICAO Aeródromos, Empresa, Situação Voo</text>
+
+          <path d="M 185 140 L 185 165" stroke="var(--marker)" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+          <rect x="30" y="165" width="310" height="110" rx="6" fill="var(--marker-tint)" stroke="var(--marker)" stroke-width="2"/>
+          <text x="185" y="190" text-anchor="middle" class="hand f-blue" font-size="14" font-weight="700">Pré-processamento sem Leakage</text>
+          <text x="185" y="210" text-anchor="middle" class="hand f-ink" font-size="12">• StandardScaler fit apenas no Treino</text>
+          <text x="185" y="228" text-anchor="middle" class="hand f-ink" font-size="12">• OneHotEncoder em ICAO / Cia Aérea</text>
+          <text x="185" y="246" text-anchor="middle" class="hand f-warn" font-size="12" font-weight="700">★ Filtro Temporal & Divisão por Grupos</text>
+
+          <path d="M 185 275 L 185 300" stroke="var(--marker)" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+          <rect x="30" y="300" width="310" height="120" rx="6" fill="var(--warn-tint)" stroke="var(--warn)" stroke-width="1.8"/>
+          <text x="185" y="325" text-anchor="middle" class="hand f-warn" font-size="14" font-weight="700">Formulação da Variável Alvo</text>
+          <text x="185" y="348" text-anchor="middle" class="hand f-ink" font-size="12">• Classificação: Atraso Crítico (&gt;15 min)</text>
+          <text x="185" y="366" text-anchor="middle" class="hand f-ink" font-size="12">• Regressão: Minutos de Atraso de Chegada</text>
+          <text x="185" y="384" text-anchor="middle" class="hand f-ink" font-size="12">• Multiclasse: Cancelado / Pontual / Atrasado</text>
+        </g>
+
+        <!-- PAINEL 2: AS 4 FRENTES DE ARQUITETURA -->
+        <g transform="translate(380, 10)">
+          <rect x="10" y="10" width="380" height="440" rx="10" fill="var(--surface)" stroke="var(--edge)" stroke-width="2"/>
+          <text x="200" y="38" text-anchor="middle" class="hand f-purple" font-size="18" font-weight="700">Painel 2: Frentes Tecnológicas</text>
+
+          <!-- Front 1: MLP -->
+          <rect x="30" y="65" width="160" height="170" rx="6" fill="var(--purple-tint)" stroke="var(--purple)" stroke-width="1.5"/>
+          <text x="110" y="88" text-anchor="middle" class="hand f-purple" font-size="14" font-weight="700">3.1 MLP Densa</text>
+          <text x="110" y="110" text-anchor="middle" class="hand f-ink" font-size="11">• Camadas Densas x Largura</text>
+          <text x="110" y="128" text-anchor="middle" class="hand f-ink" font-size="11">• Dropout vs Regularização L2</text>
+          <text x="110" y="146" text-anchor="middle" class="hand f-ink" font-size="11">• Batch Normalization</text>
+          <text x="110" y="180" text-anchor="middle" class="hand f-purple" font-size="12" font-weight="700">Foco: Capacidade x Custo</text>
+
+          <!-- Front 2: RNN -->
+          <rect x="210" y="65" width="160" height="170" rx="6" fill="var(--marker-tint)" stroke="var(--marker)" stroke-width="1.5"/>
+          <text x="290" y="88" text-anchor="middle" class="hand f-blue" font-size="14" font-weight="700">3.2 Recorrentes</text>
+          <text x="290" y="110" text-anchor="middle" class="hand f-ink" font-size="11">• SimpleRNN vs GRU vs LSTM</text>
+          <text x="290" y="128" text-anchor="middle" class="hand f-ink" font-size="11">• Janelas Temporais (Sequências)</text>
+          <text x="290" y="146" text-anchor="middle" class="hand f-ink" font-size="11">• Predição de Séries VRA</text>
+          <text x="290" y="180" text-anchor="middle" class="hand f-blue" font-size="12" font-weight="700">Foco: Ordem Cronológica</text>
+
+          <!-- Front 3: CNN -->
+          <rect x="30" y="250" width="160" height="180" rx="6" fill="var(--warn-tint)" stroke="var(--warn)" stroke-width="1.5"/>
+          <text x="110" y="273" text-anchor="middle" class="hand f-warn" font-size="14" font-weight="700">3.3 Convolucionais</text>
+          <text x="110" y="295" text-anchor="middle" class="hand f-ink" font-size="11">• ResNet vs VGG vs GoogLeNet</text>
+          <text x="110" y="313" text-anchor="middle" class="hand f-ink" font-size="11">• Fine-Tuning vs Congelamento</text>
+          <text x="110" y="331" text-anchor="middle" class="hand f-ink" font-size="11">• Data Augmentation Plausível</text>
+          <text x="110" y="365" text-anchor="middle" class="hand f-warn" font-size="12" font-weight="700">Foco: Imagens / Vizinhança</text>
+
+          <!-- Front 4: Autoencoders -->
+          <rect x="210" y="250" width="160" height="180" rx="6" fill="var(--code)" stroke="var(--edge)" stroke-width="1.5"/>
+          <text x="290" y="273" text-anchor="middle" class="hand f-ink" font-size="14" font-weight="700">3.4 Autoencoders</text>
+          <text x="290" y="295" text-anchor="middle" class="hand f-ink" font-size="11">• Espaço Latente 2D / Visualização</text>
+          <text x="290" y="313" text-anchor="middle" class="hand f-ink" font-size="11">• Denoising & Imputação</text>
+          <text x="290" y="331" text-anchor="middle" class="hand f-ink" font-size="11">• Features Compactadas em MLP</text>
+          <text x="290" y="365" text-anchor="middle" class="hand f-ink" font-size="12" font-weight="700">Foco: Representação</text>
+        </g>
+
+        <!-- PAINEL 3: OTINIZAÇÃO COM OPTUNA E AVALIAÇÃO -->
+        <g transform="translate(780, 10)">
+          <rect x="10" y="10" width="350" height="440" rx="10" fill="var(--surface)" stroke="var(--edge)" stroke-width="2"/>
+          <text x="185" y="38" text-anchor="middle" class="hand f-warn" font-size="18" font-weight="700">Painel 3: Otimização & Avaliação</text>
+
+          <rect x="30" y="65" width="310" height="90" rx="6" fill="var(--warn-tint)" stroke="var(--warn)" stroke-width="1.8"/>
+          <text x="185" y="90" text-anchor="middle" class="hand f-warn" font-size="14" font-weight="700">Optuna Study (Otimização Bayesiana)</text>
+          <text x="185" y="110" text-anchor="middle" class="hand f-ink" font-size="12">• Busca de Learning Rate (Log-scale)</text>
+          <text x="185" y="128" text-anchor="middle" class="hand f-ink" font-size="12">• Pruning de Tentativas Ruins (MedianPruner)</text>
+
+          <path d="M 185 155 L 185 180" stroke="var(--purple)" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+          <rect x="30" y="180" width="310" height="110" rx="6" fill="var(--purple-tint)" stroke="var(--purple)" stroke-width="1.8"/>
+          <text x="185" y="205" text-anchor="middle" class="hand f-purple" font-size="14" font-weight="700">Monitoramento do Treinamento</text>
+          <text x="185" y="225" text-anchor="middle" class="hand f-ink" font-size="12">• Curvas Loss Treino vs Validação</text>
+          <text x="185" y="243" text-anchor="middle" class="hand f-ink" font-size="12">• Detecção Visual de Overfitting</text>
+          <text x="185" y="261" text-anchor="middle" class="hand f-ink" font-size="12">• Parada Antecipada (EarlyStopping)</text>
+
+          <path d="M 185 290 L 185 315" stroke="var(--success)" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+          <rect x="30" y="315" width="310" height="105" rx="6" fill="var(--success-tint)" stroke="var(--success)" stroke-width="2"/>
+          <text x="185" y="340" text-anchor="middle" class="hand f-success" font-size="14" font-weight="700">Métricas Finais no Conjunto Teste</text>
+          <text x="185" y="360" text-anchor="middle" class="hand f-ink" font-size="12">• Macro-F1, Matriz de Confusão, RMSE</text>
+          <text x="185" y="378" text-anchor="middle" class="hand f-ink" font-size="12">• Análise Custo vs. Desempenho (FLOPs/Tempo)</text>
+          <text x="185" y="396" text-anchor="middle" class="hand f-success" font-size="12" font-weight="700">★ Entrega GitHub & Apresentação 10 min</text>
+        </g>
+      </svg>
+      <figcaption>Sintese unificada da arquitetura de desenvolvimento, busca de hiperparametros e avaliacao cientifica exigida para o trabalho de Deep Learning.</figcaption>
+    </figure>
+  </header>
+
+  <div class="grid">
+    <!-- Navigation Sidebar -->
+    <nav class="toc" aria-label="Sumário Técnico">
+      <p class="toc-title">Módulos do Relatório</p>
+      <ol>
+        <li><a href="#mod-1">Contexto e Obtenção do VRA (ANAC)</a></li>
+        <li><a href="#mod-2">Análise Exploratória e Dados (EDA)</a></li>
+        <li><a href="#mod-3">Pré-Processamento Anti-Vazamento</a></li>
+        <li><a href="#mod-4">Partição do Conjunto (Treino/Val/Teste)</a></li>
+        <li><a href="#mod-5">Hiperparametrização com Optuna</a></li>
+        <li><a href="#mod-6">Guia Detalhado das 4 Frentes</a></li>
+        <li><a href="#mod-7">Código-Fonte Mestre TensorFlow</a></li>
+        <li><a href="#mod-8">Comandos do Terminal, Pyenv e Colab</a></li>
+        <li><a href="#mod-9">Protocolo de Avaliação Experimental</a></li>
+        <li><a href="#mod-10">Análise Custo-Efetividade & Erros</a></li>
+        <li><a href="#mod-11">Roteiro para Defesa Acadêmica</a></li>
+      </ol>
+    </nav>
+
+    <article>
+
+      <!-- MÓDULO 1 -->
+      <section id="mod-1">
+        <h2>1. Contextualização do Problema, Fonte de Dados e Definição da Variável Alvo</h2>
+        <p>A pontualidade e a eficiência da malha aérea comercial representam fatores críticos de planejamento logístico e econômico. A **Agência Nacional de Aviação Civil (ANAC)** disponibiliza no **Portal Brasileiro de Dados Abertos** a base histórica do **Voo Regular Ativo (VRA)**, contendo os registros consolidados das operações de transporte aéreo no Brasil.</p>
+
+        <h3>1.1 Identificação do Dataset e Download Oficial</h3>
+        <p>A extração dos microdados deve ser realizada diretamente nos repositórios oficiais mantidos pela ANAC e catalogados no portal de Dados Abertos do Governo Federal:</p>
+        
+        <ul>
+          <li><strong>Fonte Principal de Dados:</strong> Portal Brasileiro de Dados Abertos — Conjunto de Dados do VRA (ANAC).</li>
+          <li><strong>Unidade de Observação:</strong> Um registro individual de voo comercial realizado por empresa aérea (regular ou não-regular), identificado pela combinação de número de voo, aeródromo de origem, aeródromo de destino e data/hora de partida prevista.</li>
+          <li><strong>Regra de Unicidade:</strong> O trabalho de cada grupo deve utilizar um recorte temporal ou regional exclusivo da base do VRA, impedindo que dois grupos analisem exatamente a mesma amostra.</li>
+        </ul>
+
+        <h3>1.2 Formulação do Problema Matemático e Tipos de Variável Alvo</h3>
+        <p>A equipe deverá optar rigorosamente por uma das seguintes abordagens de modelagem preditiva baseadas nos atributos de horário do VRA:</p>
+
+        <div class="formula-box">
+          <math display="block" class="formula-highlight">
+            <mtext>Abordagem A: Classificação Binária (Atraso Crítico de Partida/Chegada)</mtext>
+          </math>
+          <math display="block">
+            <mi>y</mi>
+            <mo>=</mo>
+            <mrow>
+              <mo>{</mo>
+              <mtable>
+                <mtr><mtd><mn>1</mn><mo>,</mo></mtd><mtd><mtext>se </mtext><mo>(</mo><msub><mtext>DataHoraReal</mtext><mtext>chegada</mtext></msub><mo>−</mo><msub><mtext>DataHoraPrevista</mtext><mtext>chegada</mtext></msub><mo>)</mo><mo>&gt;</mo><mn>15</mn><mtext> min</mtext></mtd></mtr>
+                <mtr><mtd><mn>0</mn><mo>,</mo></mtd><mtd><mtext>caso contrário</mtext></mtd></mtr>
+              </mtable>
+            </mrow>
+          </math>
+        </div>
+
+        <div class="formula-box">
+          <math display="block" class="formula-highlight">
+            <mtext>Abordagem B: Regressão Contínua (Tempo de Atraso em Minutos)</mtext>
+          </math>
+          <math display="block">
+            <mi>y</mi>
+            <mo>=</mo>
+            <mo>max</mo>
+            <mrow>
+              <mo>(</mo>
+              <mn>0</mn><mo>,</mo>
+              <mfrac>
+                <mrow><msub><mtext>DataHoraReal</mtext><mtext>chegada</mtext></msub><mo>−</mo><msub><mtext>DataHoraPrevista</mtext><mtext>chegada</mtext></msub></mrow>
+                <mrow><mn>60</mn><mtext> segundos</mtext></mrow>
+              </mfrac>
+              <mo>)</mo>
+            </mrow>
+            <mspace width="1em"/>
+            <mo>∈</mo>
+            <mi mathvariant="double-strut">R</mi>
+          </math>
+        </div>
+
+        <div class="formula-box">
+          <math display="block" class="formula-highlight">
+            <mtext>Abordagem C: Classificação Multiclasse (Status Operacional do Voo)</mtext>
+          </math>
+          <p style="margin: 0.3rem 0 0 0; font-size: 0.95rem;">Onde <span class="m-var">y</span> ∈ {0: Pontual/Adiantado, 1: Atraso Leve (15-45m), 2: Atraso Severo (&gt;45m), 3: Voo Cancelado}.</p>
+        </div>
+      </section>
+
+      <!-- MÓDULO 2 -->
+      <section id="mod-2">
+        <h2>2. Análise Exploratória de Dados (EDA) e Diagnóstico Descritivo</h2>
+        <p>Antes da aplicação de qualquer algoritmo de Deep Learning, os microdados do VRA devem ser submetidos a uma análise exploratória rigorosa para identificar falhas de consistência, valores nulos e assimetria distributions.</p>
+
+        <h3>2.1 Principais Atributos da Base VRA/ANAC</h3>
+        <div class="tbl">
+          <table>
+            <thead>
+              <tr><th>Atributo Original</th><th>Tipo de Dado</th><th>Descrição Fisiológica / Operacional</th><th>Tratamento Inicial</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ICAOEmpresaAerea</code></td>
+                <td>Categórico</td>
+                <td>Código identificador da concessionária (ex: AZU, GLO, TAM).</td>
+                <td>One-Hot Encoding ou Target Encoding.</td>
+              </tr>
+              <tr>
+                <td><code>ICAOAerodromoOrigem</code></td>
+                <td>Categórico</td>
+                <td>Código ICAO do aeroporto de partida (ex: SBBR, SBGR, SBCF).</td>
+                <td>Mapeamento por frequência ou embeddings.</td>
+              </tr>
+              <tr>
+                <td><code>ICAOAerodromoDestino</code></td>
+                <td>Categórico</td>
+                <td>Código ICAO do aeroporto de chegada.</td>
+                <td>Mapeamento por frequência ou embeddings.</td>
+              </tr>
+              <tr>
+                <td><code>PartidaPrevista</code></td>
+                <td>Datetime</td>
+                <td>Data e hora agendada para a decolagem no HOTRAN.</td>
+                <td>Extração de variáveis cíclicas (seno/cosseno).</td>
+              </tr>
+              <tr>
+                <td><code>SituacaoVoo</code></td>
+                <td>Categórico</td>
+                <td>Estado final registrado: REALIZADO ou CANCELADO.</td>
+                <td>Filtro do escopo ou variável alvo.</td>
+              </tr>
+              <tr>
+                <td><code>CodigoJustificativa</code></td>
+                <td>Categórico</td>
+                <td>Motivo do atraso/cancelamento informado pela empresa.</td>
+                <td>Remover do preditor (risco de vazamento).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warn">
+          <p><strong>Cuidado Crítico com Valores Nulos e Anômalos:</strong> Nos registros do VRA, voos cancelados não possuem valores de <code>PartidaReal</code> ou <code>ChegadaReal</code>. Ao formular problemas de predição de tempo de voo ou atraso numérico, os registros cancelados devem ser tratados adequadamente (separados em tarefa multiclasse ou removidos com justificativa formal explicitada no relatório).</p>
+        </div>
+      </section>
+
+      <!-- MÓDULO 3 -->
+      <section id="mod-3">
+        <h2>3. Pré-Processamento Adequado e Prevenção Rígida de Data Leakage</h2>
+        <p>Uma das causas mais comuns de invalidação de pesquisas acadêmicas em Deep Learning é o **Data Leakage (Vazamento de Dados)**, que ocorre quando informações do conjunto de teste ou da variável alvo influenciam o treinamento do modelo.</p>
+
+        <h3>3.1 A Regra de Ouro do Pré-Processamento</h3>
+        <p>Todas as transformações estatísticas — incluindo o cálculo de média e desvio-padrão para o <code>StandardScaler</code>, os limites de mínimo e máximo para o <code>MinMaxScaler</code>, e o ajuste de categorias no <code>OneHotEncoder</code> — devem ser estimadas **exclusivamente com os dados do conjunto de Treinamento**.</p>
+
+        <div class="formula-box">
+          <math display="block">
+            <msub><mu>&mu;</mo><mtext>treino</mtext></msub>
+            <mo>=</mo>
+            <mfrac><mn>1</mn><msub><mi>N</mi><mtext>treino</mtext></msub></mfrac>
+            <munderover>
+              <mo>∑</mo>
+              <mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow>
+              <msub><mi>N</mi><mtext>treino</mtext></msub>
+            </munderover>
+            <msubsup><mi>x</mi><mi>k</mi><mtext>(treino)</mtext></msubsup>
+            <mo>,</mo>
+            <mspace width="1.5em"/>
+            <msub><mi>X</mi><mtext>teste_normalizado</mtext></msub>
+            <mo>=</mo>
+            <mfrac>
+              <mrow><msub><mi>X</mi><mtext>teste</mtext></msub><mo>−</mo><msub><mo>&mu;</mo><mtext>treino</mtext></msub></mrow>
+              <msub><mo>&sigma;</mo><mtext>treino</mtext></msub>
+            </mfrac>
+          </math>
+        </div>
+
+        <h3>3.2 Eliminação de Atributos com Vazamento no VRA</h3>
+        <p>Para prever se um voo atrasará no momento da sua decolagem (ou horas antes), **é estritamente proibido** utilizar atributos do VRA que só são preenchidos durante ou após a realização da operação. Atributos como <code>ChegadaReal</code>, <code>CodigoJustificativa</code> e <code>SituacaoVoo</code> (quando prevendo atraso contínuo) constituem vazamento direto da variável alvo e devem ser removidos do vetor de entrada <span class="m-vec">X</span>.</p>
+      </section>
+
+      <!-- MÓDULO 4 -->
+      <section id="mod-4">
+        <h2>4. Estratégia Científica de Divisão dos Dados (Treino, Validação e Teste)</h2>
+        <p>A partição da base de dados do VRA deve espelhar a estrutura do problema no mundo real, respeitando a dependência temporal ou grupal das operações aéreas.</p>
+
+        <div class="tbl">
+          <table>
+            <thead>
+              <tr><th>Partição</th><th>Proporção Típica</th><th>Finalidade Científica no Experimento</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Treinamento (Train)</strong></td>
+                <td>60% - 70%</td>
+                <td>Ajuste dos pesos e bias das redes neurais via retropropagação (Backpropagation) e estimativa dos parâmetros de pré-processamento.</td>
+              </tr>
+              <tr>
+                <td><strong>Validação (Validation)</strong></td>
+                <td>15% - 20%</td>
+                <td>Seleção de hyperparâmetros via Optuna, avaliação do critério de parada antecipada (Early Stopping) e escolha da melhor arquitetura.</td>
+              </tr>
+              <tr>
+                <td><strong>Teste (Test)</strong></td>
+                <td>15% - 20%</td>
+                <td>Estimativa final e não-viciada da capacidade de generalização do modelo em dados totalmente inéditos.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          <p><strong>Estratégias Obrigatórias de Divisão:</strong></p>
+          <ul>
+            <li><strong>Séries Temporais / Dados Cronológicos:</strong> A divisão deve ser estritamente cronológica (ex: treinar com dados de Jan a Out, validar em Nov e testar em Dez). É proibido o uso de <code>train_test_split</code> aleatório com embaralhamento (shuffle) para evitar contaminação do passado pelo futuro.</li>
+            <li><strong>Divisão por Grupos (Group Split):</strong> Se o objetivo for avaliar a generalização para aeroportos ou rotas inéditas, as partições devem ser divididas por grupos de rotas/aeródromos para garantir que o mesmo aeroporto não apareça em partições distintas.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- MÓDULO 5 -->
+      <section id="mod-5">
+        <h2>5. Otimização Bayesiana de Hiperparâmetros com Optuna</h2>
+        <p>A busca por configurações de hiperparâmetros não deve ser realizada por tentativas empíricas sem critério. É exigida a condução de **Otimização Bayesiana** utilizando o framework <code>Optuna</code>, minimizando a perda ou otimizando a métrica no conjunto de **Validação**.</p>
+
+        <h3>5.1 Estrutura do Espaço de Busca e Priorização</h3>
+        <p>O grupo deve justificar o intervalo plausível selecionado para cada um dos seguintes hiperparâmetros essenciais:</p>
+
+        <div class="formula-box">
+          <math display="block">
+            <mtext>Taxa de Aprendizado (Learning Rate): </mtext>
+            <mo>&eta;</mo>
+            <mo>&isin;</mo>
+            <mo>[</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup><mo>,</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>]</mo>
+            <mspace width="1em"/>
+            <mtext>(Escala Logarítmica)</mtext>
+          </math>
+          <math display="block">
+            <mtext>Tamanho do Lote (Batch Size): </mtext>
+            <mi>B</mi>
+            <mo>&isin;</mo>
+            <mo>{</mo><mn>32</mn><mo>,</mo><mn>64</mn><mo>,</mo><mn>128</mn><mo>,</mo><mn>256</mn><mo>,</mo><mn>512</mn><mo>}</mo>
+          </math>
+          <math display="block">
+            <mtext>Taxa de Dropout: </mtext>
+            <mi>d</mi>
+            <mo>&isin;</mo>
+            <mo>[</mo><mn>0.0</mn><mo>,</mo><mn>0.5</mn><mo>]</mo>
+            <mspace width="1em"/>
+            <mtext>| Decaimento L2 (Weight Decay): </mtext>
+            <mo>&lambda;</mo>
+            <mo>&isin;</mo>
+            <mo>[</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>6</mn></mrow></msup><mo>,</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>2</mn></mrow></msup><mo>]</mo>
+          </math>
+        </div>
+
+        <h3>5.2 Código de Integração Optuna + Keras/TensorFlow</h3>
+        <pre><code>import optuna
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
+def objective(trial):
+    # 1. Sugestão de Hiperparâmetros
+    lr = trial.suggest_float('lr', 1e-4, 1e-1, log=True)
+    n_layers = trial.suggest_int('n_layers', 1, 4)
+    units = trial.suggest_categorical('units', [32, 64, 128, 256])
+    dropout_rate = trial.suggest_float('dropout', 0.0, 0.5)
+    
+    # 2. Construção da Arquitetura Densa
+    model = Sequential()
+    model.add(Dense(units, activation='relu', input_shape=(X_train.shape[1],)))
+    model.add(Dropout(dropout_rate))
+    
+    for i in range(n_layers - 1):
+        model.add(Dense(units, activation='relu'))
+        model.add(Dropout(dropout_rate))
+        
+    model.add(Dense(1, activation='sigmoid')) # Assumindo Classificação Binária
+    
+    # 3. Compilação
+    optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
+    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    
+    # 4. Treinamento com Early Stopping
+    early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=30,
+        batch_size= trial.suggest_categorical('batch_size', [64, 128]),
+        callbacks=[early_stop],
+        verbose=0
+    )
+    
+    # Retorna a menor perda obtida na validação
+    val_loss = min(history.history['val_loss'])
+    return val_loss
+
+# Disparo da Busca Bayesiana
+study = optuna.create_study(direction='minimize', pruner=optuna.pruners.MedianPruner())
+study.optimize(objective, n_trials=20)
+print("Melhores Hiperparâmetros:", study.best_params)</code></pre>
+      </section>
+
+      <!-- MÓDULO 6 -->
+      <section id="mod-6">
+        <h2>6. Requisitos Específicos das 4 Frentes de Desenvolvimento</h2>
+        <p>O grupo deve obrigatoriamente escolher **apenas uma das quatro frentes** a seguir e cumprir todos os requisitos exigidos para a frente escolhida.</p>
+
+        <h3>Frente 3.1: Multilayer Perceptrons (MLP)</h3>
+        <ul>
+          <li><strong>Avaliação de Capacidade:</strong> Investigar sistematicamente o impacto da variação de largura (número de neurônios: 32 a 512) e profundidade (número de camadas: 1 a 5 camadas ocultas).</li>
+          <li><strong>Estratégias de Regularização:</strong> Comparar o efeito isolado e combinado de Dropout, Regularização L1/L2, Batch Normalization e Parada Antecipada (Early Stopping).</li>
+          <li><strong>Variações de Arquitetura:</strong> Selecionar e comparar detalhadamente ao menos **três variações promissoras de arquitetura** resultantes da busca do Optuna.</li>
+        </ul>
+
+        <h3>Frente 3.2: Redes Recorrentes (RNN / LSTM / GRU)</h3>
+        <ul>
+          <li><strong>Modelagem Temporal:</strong> Modelar o problema do VRA como série temporal multivariada, preservando estritamente a ordem cronológica dos dados.</li>
+          <li><strong>Comparação Tripla Obrigatória:</strong> Comparar diretamente as famílias **SimpleRNN**, **GRU** e **LSTM** sob condições experimentais rigorosamente equivalentes.</li>
+          <li><strong>Janelas Temporais:</strong> Testar tamanhos de janela temporal (ex: timesteps de 5, 10 e 20 voos anteriores) e discutir dependências de longo prazo versus custo computacional.</li>
+        </ul>
+
+        <h3>Frente 3.3: Redes Convolucionais (CNN)</h3>
+        <ul>
+          <li><strong>Domínio de Dados:</strong> Aplicar convoluções em dados de imagens ou matrizes estruturadas (ex: matrizes de densidade de tráfego aéreo por aeroporto/horário).</li>
+          <li><strong>Comparação de Arquiteturas:</strong> Comparar ao menos **três famílias consagradas** (ex: ResNet, VGG, GoogLeNet/Inception).</li>
+          <li><strong>Transfer Learning:</strong> Comparar o treinamento a partir de pesos aleatórios (Random Initialization) contra o uso de pesos pré-treinados (ImageNet), avaliando o efeito do congelamento parcial de camadas e da aplicação de *Data Augmentation*.</li>
+        </ul>
+
+        <h3>Frente 3.4: Autoencoders</h3>
+        <ul>
+          <li><strong>Espaço Latente 2D:</strong> Treinar um Autoencoder com gargalo (bottleneck) de dimensão 2 e gerar gráficos de dispersão do espaço latente, colorindo os pontos pelas classes da variável alvo do VRA.</li>
+          <li><strong>Remoção de Ruído e Imputação:</strong> Avaliar a capacidade do Denoising Autoencoder em reconstruir atributos do VRA após injeção sintética de ruído e mascaramento de dados ausentes.</li>
+          <li><strong>Representação para MLP:</strong> Extrair as representações latentes compactadas e utilizá-las como entrada para uma MLP supervisionada, comparando o desempenho contra uma MLP treinada nas features originais.</li>
+        </ul>
+      </section>
+
+      <!-- MÓDULO 7 -->
+      <section id="mod-7">
+        <h2>7. Código Mestre de Pipeline TensorFlow/Keras para o VRA</h2>
+        <p>Abaixo é fornecido um script completo de referência para carga, pré-processamento sem leakage, treinamento e avaliação de modelo supervisionado utilizando os dados abertos do VRA.</p>
+
+        <pre><code>import pandas as pd
+import numpy as np
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.metrics import classification_report, confusion_matrix
+
+# 1. Carga dos dados abertos do VRA (ANAC)
+df = pd.read_csv('vra_dados_abertos_anac.csv', sep=';', encoding='utf-8')
+
+# 2. Engenharia da Variável Alvo e Limpeza Básica
+df = df.dropna(subset=['PartidaPrevista', 'PartidaReal'])
+df['PartidaPrevista'] = pd.to_datetime(df['PartidaPrevista'])
+df['PartidaReal'] = pd.to_datetime(df['PartidaReal'])
+
+# Calculo do atraso em minutos (Regressao ou Classificacao)
+df['AtrasoPartidaMin'] = (df['PartidaReal'] - df['PartidaPrevista']).dt.total_seconds() / 60.0
+df['AlvoBinario'] = (df['AtrasoPartidaMin'] > 15).astype(int)
+
+# Ordenação Cronológica Obrigatória
+df = df.sort_values('PartidaPrevista').reset_index(drop=True)
+
+# 3. Divisão Cronológica (Train / Val / Test)
+n = len(df)
+train_df = df.iloc[:int(n*0.6)]
+val_df = df.iloc[int(n*0.6):int(n*0.8)]
+test_df = df.iloc[int(n*0.8):]
+
+# 4. Pré-processamento sem Data Leakage
+num_cols = ['HorarioDecolagem_Hora'] # Exemplo de atributo extraido
+cat_cols = ['ICAOEmpresaAerea', 'ICAOAerodromoOrigem']
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), num_cols),
+        ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), cat_cols)
+    ]
+)
+
+# FIT APENAS NO TREINO
+X_train = preprocessor.fit_transform(train_df)
+y_train = train_df['AlvoBinario'].values
+
+# TRANSFORM EM VALIDAÇÃO E TESTE
+X_val = preprocessor.transform(val_df)
+y_val = val_df['AlvoBinario'].values
+
+X_test = preprocessor.transform(test_df)
+y_test = test_df['AlvoBinario'].values
+
+# 5. Construção e Compilação da Rede Neural
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+              loss='binary_crossentropy',
+              metrics=['accuracy', tf.keras.metrics.AUC(name='auc')])
+
+# 6. Treinamento
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_val, y_val),
+    epochs=50,
+    batch_size=256,
+    callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True)]
+)
+
+# 7. Avaliação Final
+test_loss, test_acc, test_auc = model.evaluate(X_test, y_test)
+print(f"\n[Resultado Teste] Acurácia: {test_acc:.4f} | AUC: {test_auc:.4f}")</code></pre>
+      </section>
+
+      <!-- MÓDULO 8 -->
+      <section id="mod-8">
+        <h2>8. Guia Prático de Terminal Linux, Ambiente Pyenv e Colab</h2>
+        <p>Instruções passo a passo para configuração de ambiente isolado e reprodutível em sistemas Linux ou máquinas virtuais no Google Colab.</p>
+
+        <h3>8.1 Configuração de Ambiente Local com Pyenv</h3>
+        <pre><code># Atualização do sistema e instalação de bibliotecas de compilação
+sudo apt update && sudo apt install -y build-essential libssl-dev zlib1g-dev \
+libbz2-dev libreadline-dev libsqlite3-dev curl git libffi-dev liblzma-dev
+
+# Instalação do Pyenv e gerenciamento da versão Python
+curl https://pyenv.run | bash
+pyenv install 3.10.12
+pyenv global 3.10.12
+
+# Criação e ativação do ambiente virtual
+python -m venv venv_dl
+source venv_dl/bin/activate
+
+# Instalação das bibliotecas científicas e Deep Learning
+pip install --upgrade pip
+pip install tensorflow torch optuna pandas numpy scikit-learn matplotlib seaborn jupyterlab</code></pre>
+
+        <h3>8.2 Organização do Repositório GitHub do Trabalho</h3>
+        <pre><code>meu_projeto_dl_vra/
+├── data/                  # Instruções para download dos microdados do VRA (não subir CSVs pesados)
+├── notebooks/             # Jupyter Notebooks organizados por etapa (01_EDA.ipynb, 02_Optuna.ipynb)
+├── src/                   # Módulos Python reutilizáveis (preprocessing.py, models.py)
+├── results/               # Matrizes de confusão, gráficos de loss e relatórios JSON
+├── README.md              # Documentação principal com instruções de execução
+└── requirements.txt       # Lista de dependências e versões exatas</code></pre>
+      </section>
+
+      <!-- MÓDULO 9 -->
+      <section id="mod-9">
+        <h2>9. Protocolo de Avaliação Experimental e Métricas</h2>
+        <p>A seleção das métricas de avaliação deve ser estritamente coerente com o tipo de problema e com a distribuição da variável alvo no VRA.</p>
+
+        <h3>9.1 Métricas para Classificação (Binária ou Multiclasse)</h3>
+        <p>Devido ao forte desbalanceamento histórico dos voos (voos pontuais superam em larga escala os voos com atrasos graves), **a Acurácia Isolada não deve ser utilizada como única métrica decisória**.</p>
+
+        <div class="formula-box">
+          <math display="block">
+            <mtext>Precisão (Precision): </mtext>
+            <mi>P</mi>
+            <mo>=</mo>
+            <mfrac><mtext>VP</mtext><mrow><mtext>VP</mtext><mo>+</mo><mtext>FP</mtext></mrow></mfrac>
+            <mspace width="1.5em"/>
+            <mtext>Revocação (Recall): </mtext>
+            <mi>R</mi>
+            <mo>=</mo>
+            <mfrac><mtext>VP</mtext><mrow><mtext>VP</mtext><mo>+</mo><mtext>FN</mtext></mrow></mfrac>
+          </math>
+          <math display="block" class="formula-highlight">
+            <mtext>Macro F1-Score: </mtext>
+            <msub><mtext>F1</mtext><mtext>Macro</mtext></msub>
+            <mo>=</mo>
+            <mfrac><mn>1</mn><mi>C</mi></mfrac>
+            <munderover>
+              <mo>∑</mo>
+              <mrow><mi>c</mi><mo>=</mo><mn>1</mn></mrow>
+              <mi>C</mi>
+            </munderover>
+            <mn>2</mn><mo>&times;</mo>
+            <mfrac>
+              <mrow><msub><mi>P</mi><mi>c</mi></msub><mo>&times;</mo><msub><mi>R</mi><mi>c</mi></msub></mrow>
+              <mrow><msub><mi>P</mi><mi>c</mi></msub><mo>+</mo><msub><mi>R</mi><mi>c</mi></msub></mrow>
+            </mfrac>
+          </math>
+        </div>
+
+        <h3>9.2 Métricas para Regressão Contínua</h3>
+        <div class="formula-box">
+          <math display="block">
+            <mtext>Erro Médio Absoluto (MAE): </mtext>
+            <mtext>MAE</mtext>
+            <mo>=</mo>
+            <mfrac><mn>1</mn><mi>N</mi></mfrac>
+            <mo>&sum;</mo>
+            <mrow><mo>|</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover><mi>y</mi><mo>&circ;</mo></mover><mi>i</mi></msub><mo>|</mo></mrow>
+          </math>
+          <math display="block">
+            <mtext>Raiz do Erro Quadrático Médio (RMSE): </mtext>
+            <mtext>RMSE</mtext>
+            <mo>=</mo>
+            <msqrt>
+              <mfrac><mn>1</mn><mi>N</mi></mfrac>
+              <mo>&sum;</mo>
+              <msup><mrow><mo>(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><msub><mover><mi>y</mi><mo>&circ;</mo></mover><mi>i</mi></msub><mo>)</mo></mrow><mn>2</mn></msup>
+            </msqrt>
+          </math>
+        </div>
+      </section>
+
+      <!-- MÓDULO 10 -->
+      <section id="mod-10">
+        <h2>10. Análise Crítica do Custo-Efetividade Computacional e Erros</h2>
+        <p>A avaliação final do projeto deve ir além das métricas isoladas de acurácia ou erro, incorporando uma análise crítica sobre a eficiência computacional das redes treinadas.</p>
+
+        <div class="tbl">
+          <table>
+            <thead>
+              <tr><th>Arquitetura Avaliada</th><th>Parâmetros Treináveis</th><th>Tempo de Treino / Época</th><th>Tempo de Inferência (1k amostras)</th><th>Macro F1 (Teste)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>MLP Pequena (1 Camada / 64 n)</strong></td>
+                <td>~12.000</td>
+                <td>1.2 segundos</td>
+                <td>8 milissegundos</td>
+                <td>0.712</td>
+              </tr>
+              <tr>
+                <td><strong>MLP Otimizada Optuna (3 Camadas)</strong></td>
+                <td>~145.000</td>
+                <td>3.8 segundos</td>
+                <td>14 milissegundos</td>
+                <td>0.785</td>
+              </tr>
+              <tr>
+                <td><strong>LSTM Recorrente (2 Camadas 64u)</strong></td>
+                <td>~98.000</td>
+                <td>18.5 segundos</td>
+                <td>42 milissegundos</td>
+                <td>0.802</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="purple-box">
+          <p><strong>Discussão de Trade-Off:</strong> O grupo deve responder explicitamente no relatório se o ganho incremental de desempenho justifica o aumento de complexidade, memória ocupada e tempo de inferência em um sistema de controle de tráfego aéreo em tempo real.</p>
+        </div>
+      </section>
+
+      <!-- MÓDULO 11 -->
+      <section id="mod-11">
+        <h2>11. Roteiro Definitivo para Apresentação Acadêmica (10 Minutos)</h2>
+        <p>Para a defesa do trabalho prático perante a banca examinadora, a apresentação de slides deve seguir rigorosamente a estrutura cronológica e o tempo limite de 10 minutos:</p>
+
+        <div class="formula-box">
+          <strong>Minutos 0:00 - 2:00 | Slide 1 e 2: Introdução e Motivação</strong>
+          <p style="margin: 0.3rem 0 0 0;">Apresentar a relevância do problema no setor aéreo (VRA/ANAC), a variável alvo definida (ex: predizer atraso de chegada) e o impacto operacional da solução proposta.</p>
+        </div>
+
+        <div class="formula-box">
+          <strong>Minutos 2:00 - 4:00 | Slide 3 e 4: Dados e Pré-Processamento Anti-Leakage</strong>
+          <p style="margin: 0.3rem 0 0 0;">Exibir estatísticas descritivas do VRA, justificar o tratamento de nulos/outliers e comprovar a aplicação do protocolo de divisão cronológica/grupo para impedir o vazamento de dados.</p>
+        </div>
+
+        <div class="formula-box">
+          <strong>Minutos 4:00 - 7:00 | Slide 5 e 6: Frentes Tecnológicas e Busca com Optuna</strong>
+          <p style="margin: 0.3rem 0 0 0;">Detalhar a frente escolhida (MLP, RNN, CNN ou Autoencoder), o espaço de busca de hiperparâmetros configurado no Optuna e apresentar as curvas de perda (Loss vs Epochs) comparando overfitting e sob-ajuste.</p>
+        </div>
+
+        <div class="formula-box">
+          <strong>Minutos 7:00 - 10:00 | Slide 7 e 8: Resultados no Teste e Conclusão Crítica</strong>
+          <p style="margin: 0.3rem 0 0 0;">Apresentar a tabela final comparativa com métricas do conjunto de teste (Macro-F1, Matriz de Confusão, RMSE) e a análise de custo-efetividade computacional (tempo de inferência e número de parâmetros).</p>
+        </div>
+      </section>
+
+    </article>
+  </div>
+</div>
+
+<script>
+function toggleTheme() {
+  const root = document.documentElement;
+  const currentTheme = root.getAttribute('data-theme');
+  
+  if (currentTheme === 'dark') {
+    root.setAttribute('data-theme', 'light');
+    document.getElementById('themeLabel').textContent = 'Modo Escuro';
+  } else {
+    root.setAttribute('data-theme', 'dark');
+    document.getElementById('themeLabel').textContent = 'Modo Claro';
+  }
+}
+
+(function initTheme() {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (prefersDark) {
+    document.getElementById('themeLabel').textContent = 'Modo Claro';
+  } else {
+    document.getElementById('themeLabel').textContent = 'Modo Escuro';
+  }
+})();
+</script>
+</body>
+</html>

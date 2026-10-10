@@ -1,0 +1,16 @@
+# Core Deep Learning & Scientific Stack
+tensorflow>=2.15.0; sys_platform != 'darwin' or platform_machine != 'arm64'
+torch>=2.2.0
+torchvision
+optuna>=3.5.0
+scikit-learn>=1.4.0
+pandas>=2.2.0
+numpy>=1.26.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Jupyter & Utilities
+jupyterlab
+ipykernel
+tqdm
+requests

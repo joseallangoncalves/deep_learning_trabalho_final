@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apresentação: Deep Learning Aplicado ao VRA / ANAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-border: #334155;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-tint: rgba(56, 189, 248, 0.15);
+  --success: #4ade80;
+  --warn: #fb923c;
+  --purple: #c084fc;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header & Controls */
+header {
+  height: 60px;
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timer {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer.warning { color: var(--warn); border-color: var(--warn); }
+.timer.danger { color: #f87171; border-color: #f87171; }
+
+button {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  color: var(--text);
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* Slide Deck Container */
+main {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.slide {
+  position: absolute;
+  width: 90%;
+  max-width: 1100px;
+  height: 80vh;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 3rem;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.slide.active { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-badge {
+  display: inline-block;
+  background: var(--accent-tint);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+.slide-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.slide-subtitle {
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.slide-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.card h4 {
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+ul { padding-left: 1.4rem; }
+li { margin-bottom: 0.5rem; color: #cbd5e1; }
+
+.table-wrap {
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+th {
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--surface-border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.progress-bar-container {
+  height: 4px;
+  background: var(--surface-border);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  width: 12.5%;
+  transition: width 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    ✈️ Deep Learning • VRA / ANAC (2026/2)
+  </div>
+  <div class="controls">
+    <div class="timer" id="timerBox">⏱️ <span id="timerText">00:00</span> / 10:00</div>
+    <button onclick="toggleTimer()" id="timerBtn">Iniciar Timer</button>
+    <button onclick="prevSlide()">◀ Anterior</button>
+    <button onclick="nextSlide()">Próximo ▶</button>
+  </div>
+</header>
+
+<main>
+  <!-- SLIDE 1 -->
+  <div class="slide active" id="slide-1">
+    <div>
+      <span class="slide-badge">Abertura • 0:00 - 1:00</span>
+      <h1 class="slide-title">Previsão de Atrasos Operacionais no Voo Regular Ativo (VRA / ANAC)</h1>
+      <p class="slide-subtitle">Modelagem Preditiva com Multilayer Perceptrons (MLP) e Comparativo Recorrente (LSTM)</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>Disciplina e Docente</h4>
+          <p><strong>Disciplina:</strong> Deep Learning (2026/2)</p>
+          <p><strong>Docente:</strong> Prof. Dr. Sérgio Canuto</p>
+          <p><strong>Instituição:</strong> Instituto Federal de Goiás (IFG)</p>
+        </div>
+        <div class="card">
+          <h4>Equipe & Frentes Tecnológicas</h4>
+          <p><strong>Frente Principal (3.1):</strong> Multilayer Perceptrons (MLP)</p>
+          <p><strong>Frente Comparativa (3.2):</strong> Redes Recorrentes (LSTM)</p>
+          <p><strong>Otimização:</strong> Busca Bayesiana com Optuna & MedianPruner</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 1 de 8</span>
+      <span>Uso de Teclas: ← / → ou Barra de Espaço</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide" id="slide-2">
+    <div>
+      <span class="slide-badge">Contexto & Problema • 1:00 - 2:00</span>
+      <h2 class="slide-title">1. Contexto, Utilidade e Formulação Matemática</h2>
+      <p class="slide-subtitle">Portal Brasileiro de Dados Abertos e Tolerância Regulatória da ANAC</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>O Conjunto de Dados do VRA</h4>
+          <ul>
+            <li><strong>Fonte:</strong> ANAC / Dados Abertos Federais.</li>
+            <li><strong>Unidade de Observação:</strong> O registro individual de voo comercial regular.</li>
+            <li><strong>Concessionárias:</strong> AZU, GLO, TAM, ONE, passaredo.</li>
+            <li><strong>Impacto:</strong> Otimização de alocação de equipes de solo e mitigação de custos com atrasos.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Formulação da Variável Alvo</h4>
+          <p style="font-family:'JetBrains Mono'; margin-bottom:0.8rem; color:var(--accent);">
+            Atraso = (ChegadaReal - ChegadaPrevista) / 60s
+          </p>
+          <p><strong>Classificação Binária de Atraso Crítico:</strong></p>
+          <ul>
+            <li><strong>Classe 1 (Atrasado):</strong> Atraso &gt; 15 minutos (critério regulatório da ANAC).</li>
+            <li><strong>Classe 0 (Pontual):</strong> Atraso &le; 15 minutos (tolerância de operação).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 2 de 8</span>
+      <span>Critério I: Justificativa Formal da Variável Alvo</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide" id="slide-3">
+    <div>
+      <span class="slide-badge">Engenharia de Dados • 2:00 - 3:00</span>
+      <h2 class="slide-title">2. Blindagem Anti-Leakage e Features Cíclicas</h2>
+      <p class="slide-subtitle">Respeito estrito à Regra de Ouro do Pré-processamento e Continuidade Temporal</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>Prevenção Rígida de Data Leakage</h4>
+          <ul>
+            <li><strong>Exclusão de Atributos Pós-Fato:</strong> <code>ChegadaReal</code>, <code>CodigoJustificativa</code> e variáveis alimentadas após a decolagem foram removidas de X.</li>
+            <li><strong>Estimativa Isolada no Treino:</strong> <code>StandardScaler</code> e <code>OneHotEncoder</code> ajustados (<code>fit</code>) unicamente nos 70% de treino.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Transformação Cíclica (Seno/Cosseno)</h4>
+          <p>Preserva a continuidade física entre 23:59 e 00:00:</p>
+          <p style="font-family:'JetBrains Mono'; color:var(--purple); margin:0.5rem 0;">
+            hora_sin = sin(2π · hora / 24)<br>
+            hora_cos = cos(2π · hora / 24)<br>
+            dia_sin  = sin(2π · dia_semana / 7)
+          </p>
+          <p>Evita descontinuidade euclidiana nas redes neurais.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 3 de 8</span>
+      <span>Critério I: Tratamento Metodológico Anti-Vazamento</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="slide" id="slide-4">
+    <div>
+      <span class="slide-badge">Divisão Científica • 3:00 - 4:00</span>
+      <h2 class="slide-title">3. Particionamento Cronológico e Desbalanceamento</h2>
+      <p class="slide-subtitle">Divisão temporal ordenada e balanceamento por ponderação de perdas</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>Divisão Cronológica (Sem Shuffle)</h4>
+          <ul>
+            <li><strong>Treino (70%):</strong> Primeiros 4.027 voos cronológicos.</li>
+            <li><strong>Validação (15%):</strong> 863 voos subsequentes (Optuna & Early Stopping).</li>
+            <li><strong>Teste (15%):</strong> 863 voos finais mais recentes (avaliação cega).</li>
+            <li><strong>Proibido:</strong> <code>train_test_split(shuffle=True)</code> que permitiria prever o passado com o futuro.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Ponderação de Classes (Class Weight)</h4>
+          <ul>
+            <li><strong>Distribuição Real:</strong> 78.8% Pontuais vs. 21.2% Atrasados.</li>
+            <li><strong>Acurácia Isolada é Inútil:</strong> Um modelo cego acertaria 79% das previsões.</li>
+            <li><strong>Pesos Inversos:</strong> w0 = 0.637 | w1 = 2.325.</li>
+            <li><strong>Métrica Decisória:</strong> Macro F1-Score e AUC-ROC.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 4 de 8</span>
+      <span>Critério I & IV: Métricas Apropriadas para Dados Desbalanceados</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="slide" id="slide-5">
+    <div>
+      <span class="slide-badge">Modelagem Neural • 4:00 - 5:30</span>
+      <h2 class="slide-title">4. Frente 3.1: Multilayer Perceptrons (MLP)</h2>
+      <p class="slide-subtitle">Investigação de Capacidade, Profundidade e Estratégias de Regularização</p>
+    </div>
+    <div class="slide-content">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Variação</th>
+              <th>Topologia Oculta</th>
+              <th>Regularização Aplicada</th>
+              <th>Propósito Experimental</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>V1 (Baseline Rasa)</strong></td>
+              <td>1 camada (64 neurônios)</td>
+              <td>Nenhuma (sem dropout, sem L2)</td>
+              <td>Piso de capacidade mínima.</td>
+            </tr>
+            <tr>
+              <td><strong>V2 (Profunda Regularizada)</strong></td>
+              <td>3 camadas (256 → 128 → 64)</td>
+              <td>Dropout (0.3), L2 (1e-4), BatchNorm</td>
+              <td>Prevenção ativa de overfitting.</td>
+            </tr>
+            <tr>
+              <td><strong>V3 (Otimizada Optuna)</strong></td>
+              <td>Piramidal (32 → 64 → 128)</td>
+              <td>Dropout (0.21), L2 (1.4e-5), BatchNorm</td>
+              <td>Melhor configuração Bayesiana.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem; color:var(--muted); font-size:0.95rem;">
+        Inicializadores: <strong>He Normal</strong> para camadas ReLU; <strong>Glorot Uniform</strong> para a camada de saída Sigmoide.
+      </p>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 5 de 8</span>
+      <span>Critério II: Corretude da Modelagem das Arquiteturas</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 -->
+  <div class="slide" id="slide-6">
+    <div>
+      <span class="slide-badge">Otimização Bayesiana • 5:30 - 7:00</span>
+      <h2 class="slide-title">5. Busca Bayesiana com Optuna & MedianPruner</h2>
+      <p class="slide-subtitle">Exploração orientada por TPE com justificativa teórica formal de intervalos</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>Espaço de Busca Justificado</h4>
+          <ul>
+            <li><strong>Learning Rate (log):</strong> [1e-4, 1e-1] (estabilidade vs. convergência).</li>
+            <li><strong>Batch Size:</strong> {32, 64, 128, 256} (ruído estocástico benéfico).</li>
+            <li><strong>Profundidade:</strong> [1, 4] camadas densas.</li>
+            <li><strong>Dropout:</strong> [0.0, 0.5] (evitar coadaptação de neurônios).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Poda Automática (MedianPruner)</h4>
+          <ul>
+            <li><strong>Algoritmo TPE:</strong> Modela distribuições a posteriori de tentativas passadas.</li>
+            <li><strong>Poda Intermediária:</strong> Trials com perda superior à mediana histórica na época foram abortados.</li>
+            <li><strong>Economia Computacional:</strong> Redução substancial de ciclos de GPU/CPU.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 6 de 8</span>
+      <span>Critério III: Domínio de Estratégias de Hiperparametrização</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 -->
+  <div class="slide" id="slide-7">
+    <div>
+      <span class="slide-badge">Resultados Experimentais • 7:00 - 9:00</span>
+      <h2 class="slide-title">6. Avaliação no Teste Cego & Comparativo LSTM</h2>
+      <p class="slide-subtitle">Frente 3.1 (MLP Densa) vs. Frente 3.2 (Rede Recorrente Sequencial)</p>
+    </div>
+    <div class="slide-content">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Modelo Avaliado</th>
+              <th>Macro-F1</th>
+              <th>AUC-ROC</th>
+              <th>Parâmetros</th>
+              <th>Latência (ms / 1k)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MLP V1 (Rasa Baseline)</strong></td>
+              <td>0.4348</td>
+              <td>0.5464</td>
+              <td>2.433</td>
+              <td><strong>119.97 ms</strong></td>
+            </tr>
+            <tr>
+              <td><strong>MLP V2 (Profunda Regularizada)</strong></td>
+              <td><strong>0.4936</strong></td>
+              <td>0.4761</td>
+              <td>51.585</td>
+              <td>207.89 ms</td>
+            </tr>
+            <tr>
+              <td><strong>MLP V3 (Otimizada Optuna)</strong></td>
+              <td>0.4503</td>
+              <td><strong>0.5472</strong></td>
+              <td>12.193</td>
+              <td>231.57 ms</td>
+            </tr>
+            <tr style="background:rgba(192, 132, 252, 0.1);">
+              <td><strong>Recorrente LSTM (Sequencial W=5)</strong></td>
+              <td>0.4443</td>
+              <td>0.5223</td>
+              <td>25.921</td>
+              <td>316.30 ms (+52%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem; font-size:0.95rem; color:#cbd5e1;">
+        ★ A <strong>MLP V2</strong> liderou no equilíbrio harmônico das duas classes (Macro-F1 = 0.4936), com convergência garantida pelo Early Stopping.
+      </p>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 7 de 8</span>
+      <span>Critério IV: Interpretação Científica dos Resultados</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 8 -->
+  <div class="slide" id="slide-8">
+    <div>
+      <span class="slide-badge">Conclusão Crítica • 9:00 - 10:00</span>
+      <h2 class="slide-title">7. Análise de Custo-Efetividade & Conclusões</h2>
+      <p class="slide-subtitle">Trade-Off entre Complexidade Temporal e Eficiência Operacional</p>
+    </div>
+    <div class="slide-content">
+      <div class="grid-2">
+        <div class="card">
+          <h4>Veredito do Comparativo Tabular vs. Temporal</h4>
+          <ul>
+            <li>A <strong>LSTM</strong> exigiu janelas tridimensionais (W=5) e 52% mais latência de inferência (316 ms vs 207 ms).</li>
+            <li>A <strong>MLP Densa com Features Cíclicas</strong> provou-se mais adequada para tráfego em tempo real, sem necessidade de armazenar estados de memória recorrente.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Limitações e Trabalhos Futuros</h4>
+          <ul>
+            <li><strong>Limitação:</strong> O VRA não disponibiliza vento em rota nem boletins meteorológicos METAR/TAF em tempo real.</li>
+            <li><strong>Evolução:</strong> Fusão multimodal com dados de radar e modelos híbridos com atenção.</li>
+            <li><strong>Código Aberto:</strong> Pipeline 100% reproduzível no GitHub.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span>Slide 8 de 8</span>
+      <span>Obrigado! Aberto para Perguntas da Banca Examinadora.</span>
+    </div>
+  </div>
+</main>
+
+<div class="progress-bar-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 8;
+let timerRunning = false;
+let seconds = 0;
+let timerInterval = null;
+
+function showSlide(index) {
+  if (index < 1 || index > totalSlides) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(`slide-${index}`).classList.add('active');
+  currentSlide = index;
+  
+  const pct = (currentSlide / totalSlides) * 100;
+  document.getElementById('progressBar').style.width = `${pct}%`;
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 1) showSlide(currentSlide - 1);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+  if (e.key === 'ArrowLeft') prevSlide();
+});
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = 'Continuar Timer';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = 'Pausar Timer';
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById('timerText').textContent = `${m}:${s}`;
+      
+      const box = document.getElementById('timerBox');
+      if (seconds >= 600) {
+        box.className = 'timer danger';
+      } else if (seconds >= 480) {
+        box.className = 'timer warning';
+      }
+    }, 1000);
+  }
+}
+</script>
+</body>
+</html>
