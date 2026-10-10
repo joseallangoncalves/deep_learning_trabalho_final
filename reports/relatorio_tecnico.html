@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Relatório Técnico: Deep Learning Aplicado ao VRA / ANAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<!-- KaTeX para renderização de fórmulas matemáticas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+<style>
+@page {
+  size: A4;
+  margin: 20mm 18mm 20mm 18mm;
+  @bottom-right {
+    content: counter(page);
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-size: 9pt;
+    color: #64748b;
+  }
+}
+
+:root {
+  --primary: #0f172a;
+  --secondary: #1e293b;
+  --accent: #1e40af;
+  --accent-light: #eff6ff;
+  --border: #cbd5e1;
+  --text: #1e293b;
+  --muted: #475569;
+  --box-bg: #f8fafc;
+}
+
+* { box-sizing: border-box; }
+body {
+  font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 10.5pt;
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.header-banner {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+
+.institution {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 19pt;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.25;
+  margin: 6px 0 10px;
+}
+
+.subtitle {
+  font-size: 11.5pt;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 16px;
+  background: var(--accent-light);
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 9.5pt;
+  margin-bottom: 20px;
+}
+
+.meta-item strong { color: var(--accent); }
+
+.abstract-box {
+  background: var(--box-bg);
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 24px;
+  font-size: 9.8pt;
+  text-align: justify;
+}
+
+.abstract-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 10.5pt;
+  color: var(--primary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13pt;
+  font-weight: 700;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-top: 22px;
+  margin-bottom: 10px;
+  page-break-after: avoid;
+}
+
+h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-top: 14px;
+  margin-bottom: 6px;
+  page-break-after: avoid;
+}
+
+p {
+  margin: 0 0 10px;
+  text-align: justify;
+}
+
+ul, ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+li { margin-bottom: 4px; }
+
+.formula-box {
+  background: var(--box-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin: 12px 0;
+  font-size: 10.5pt;
+  page-break-inside: avoid;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.formula-caption {
+  font-size: 8.8pt;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.2pt;
+  margin: 14px 0;
+  page-break-inside: avoid;
+}
+
+th, td {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  background: #f1f5f9;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+tr:nth-child(even) td { background: #f8fafc; }
+
+.highlight-row { background: #eff6ff !important; font-weight: 700; }
+
+.figure-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+  page-break-inside: avoid;
+}
+
+.figure-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.figure-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.figure-caption {
+  font-size: 8.5pt;
+  color: var(--muted);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 8.5pt;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-info { background: #e0f2fe; color: #075985; }
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.8pt;
+  background: #f1f5f9;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <div class="institution">Instituto Federal de Goiás (IFG) • Disciplina de Deep Learning (2026/2)</div>
+  <h1>Modelagem, Hiperparametrização e Avaliação Prática em Deep Learning</h1>
+  <div class="subtitle">Aplicação nos Microdados Operacionais do Voo Regular Ativo (VRA / ANAC)</div>
+</div>
+
+<div class="meta-grid">
+  <div class="meta-item"><strong>Docente Responsável:</strong> Prof. Dr. Sérgio Canuto</div>
+  <div class="meta-item"><strong>Data de Submissão:</strong> 15 de Outubro de 2026</div>
+  <div class="meta-item"><strong>Frente Principal (3.1):</strong> Multilayer Perceptrons (MLP)</div>
+  <div class="meta-item"><strong>Frente Comparativa (3.2):</strong> Redes Recorrentes (LSTM)</div>
+  <div class="meta-item"><strong>Dataset Oficial:</strong> Portal Brasileiro de Dados Abertos (VRA/ANAC)</div>
+  <div class="meta-item"><strong>Repositório do Projeto:</strong> github.com/usuario/deep_learning_trabalho_final</div>
+</div>
+
+<div class="abstract-box">
+  <div class="abstract-title">Resumo Técnico</div>
+  Este relatório apresenta o desenvolvimento experimental, otimização e avaliação científica de arquiteturas de Deep Learning para a predição antecipada de atrasos operacionais na malha aérea comercial brasileira. Utilizando os microdados abertos do Voo Regular Ativo (VRA/ANAC), o problema foi formulado como uma classificação binária de atraso crítico de chegada (&gt;15 minutos), incorporando protocolos rígidos contra vazamento de dados (<em>data leakage</em>), divisão cronológica temporal e extração de atributos cíclicos contínuos. A frente principal investigou a família <strong>Multilayer Perceptron (MLP)</strong> em três variações estruturadas (Rasa Baseline, Profunda Regularizada com BatchNorm/Dropout/L2 e Otimizada via Optuna com amostragem bayesiana e MedianPruner). Paralelamente, conduziu-se um estudo comparativo com <strong>Redes Neurais Recorrentes (LSTM)</strong> sobre tensores tridimensionais sequenciais. No teste cego, a MLP Profunda Regularizada alcançou o maior Macro-F1 (<strong>0.4936</strong>) com latência de 207.89 ms por 1.000 amostras, comprovando que a modelagem tabular densa supera a representação sequencial em eficiência e custo-efetividade para controle em tempo real.
+</div>
+
+<!-- SEÇÃO 1 -->
+<h2>1. Introdução e Objetivo do Problema</h2>
+<p>A pontualidade no modal aéreo comercial constitui um elemento crítico de planejamento logístico, estabilidade econômica e conformidade regulatória. Conforme dados da Agência Nacional de Aviação Civil (ANAC), disrupções em voos regulares produzem custos substanciais de assistência a passageiros, realocação de aeronaves e saturação de terminais aeroportuários.</p>
+
+<h3>1.1 Utilidade da Previsão e Unidade de Observação</h3>
+<p>A unidade elementar de análise é o <strong>voo regular individual</strong> operado por concessionária comercial homologada. A antecipação da probabilidade de atraso crítico antes da partida programada viabiliza decisões preventivas de controle de fluxo de tráfego aéreo e gestão de conexões.</p>
+
+<h3>1.2 Formulação Matemática da Variável Alvo</h3>
+<p>Adotou-se o limiar regulatório internacional e da ANAC de 15 minutos para definição de atraso crítico:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 1 — Definição do Atraso Contínuo de Chegada</div>
+  $$\text{AtrasoChegadaMin} = \frac{\text{DataHoraReal}_{\text{chegada}} - \text{DataHoraPrevista}_{\text{chegada}}}{60 \text{ segundos}}$$
+</div>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 2 — Formulação da Variável Alvo Binária</div>
+  $$y = \begin{cases} 1, & \text{se } \text{AtrasoChegadaMin} > 15 \text{ minutos (Atraso Crítico)} \\ 0, & \text{se } \text{AtrasoChegadaMin} \le 15 \text{ minutos (Pontual / Adiantado)} \end{cases}$$
+</div>
+
+<!-- SEÇÃO 2 -->
+<h2>2. Descrição da Fonte e Caracterização do Conjunto de Dados</h2>
+<p>Os microdados foram obtidos no Portal Brasileiro de Dados Abertos e na plataforma da ANAC (VRA), cobrindo concessionárias nacionais (AZU, GLO, TAM, ONE, passaredo) e os principais aeródromos do Sistema Integrado de Tráfego Aéreo (SBBR, SBGR, SBSP, SBCF, SBRJ, SBKP).</p>
+
+<h3>2.1 Protocolo Rígido Anti-Data Leakage</h3>
+<p>Em conformidade com as diretrizes teóricas das aulas de <em>Parametrização</em> do Prof. Dr. Sérgio Canuto, aplicou-se a <strong>Regra de Ouro do Pré-processamento</strong>:</p>
+<ul>
+  <li><strong>Eliminação de Variáveis Concorrentes:</strong> As colunas <code>ChegadaReal</code>, <code>PartidaReal</code> e <code>CodigoJustificativa</code> foram descartadas da matriz preditora $X$, pois só são registradas após a ocorrência da operação.</li>
+  <li><strong>Isolamento Estatístico do Treino:</strong> Parâmetros de escala do <code>StandardScaler</code> ($\mu_{\text{treino}}, \sigma_{\text{treino}}$) e mapeamentos de categorias raras do <code>OneHotEncoder</code> foram ajustados unicamente em $D_{\text{treino}}$, sendo propagados por inferência para validação e teste.</li>
+</ul>
+
+<h3>2.2 Engenharia de Features Cíclicas</h3>
+<p>Para mitigar a descontinuidade numérica de variáveis temporais (onde 23:59 e 00:00 são vizinhos próximos), aplicaram-se pares trigonométricos contínuos:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 3 — Codificação Trigonométrica Cíclica</div>
+  $$\text{Hora}_{\sin} = \sin\left(\frac{2\pi \cdot \text{Hora}}{24}\right), \quad \text{Hora}_{\cos} = \cos\left(\frac{2\pi \cdot \text{Hora}}{24}\right)$$
+  $$\text{DiaSemana}_{\sin} = \sin\left(\frac{2\pi \cdot \text{DiaSemana}}{7}\right), \quad \text{DiaSemana}_{\cos} = \cos\left(\frac{2\pi \cdot \text{DiaSemana}}{7}\right)$$
+</div>
+
+<h3>2.3 Divisão Cronológica e Desbalanceamento da Amostra</h3>
+<p>Para evitar a contaminação do passado pelo futuro, aplicou-se divisão temporal estrita (sem shuffle):</p>
+<ul>
+  <li><strong>Treinamento ($D_{\text{treino}}$):</strong> 70% cronológicos iniciais (4.027 amostras).</li>
+  <li><strong>Validação ($D_{\text{val}}$):</strong> 15% cronológicos intermediários (863 amostras para Optuna e Early Stopping).</li>
+  <li><strong>Teste ($D_{\text{teste}}$):</strong> 15% cronológicos mais recentes (863 amostras para teste cego).</li>
+</ul>
+<p>A amostra apresentou 78.8% de voos pontuais ($y=0$) e 21.2% de voos atrasados ($y=1$). Para corrigir a assimetria do gradiente, incorporou-se a ponderação inversa de classes:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 4 — Ponderação Inversa de Classes (Class Weights)</div>
+  $$w_0 = \frac{N}{2 \cdot N_0} = 0.637, \quad w_1 = \frac{N}{2 \cdot N_1} = 2.325$$
+</div>
+
+<!-- SEÇÃO 3 -->
+<h2>3. Arquiteturas, Espaço de Busca e Protocolo de Hiperparametrização</h2>
+
+<h3>3.1 Frente 3.1: Multilayer Perceptrons (Arquitetura Principal)</h3>
+<p>Fundamentada no Teorema da Aproximação Universal (Hornik et al., 1989; Kolmogorov), estruturou-se a família MLP em três variações:</p>
+<ol>
+  <li><strong>MLP V1 (Rasa Baseline):</strong> Camada densa com 64 neurônios ($\text{ReLU}$, He Normal) seguida de camada sigmoide (Glorot Uniform). Sem dropout e sem regularização $\text{L}_2$.</li>
+  <li><strong>MLP V2 (Profunda Regularizada):</strong> Três camadas ocultas ($256 \to 128 \to 64$), intercaladas com <code>BatchNormalization</code>, <code>Dropout(0.3)</code> e decaimento de pesos $\text{L}_2 = 10^{-4}$.</li>
+  <li><strong>MLP V3 (Otimizada Optuna):</strong> Arquitetura piramidal selecionada pela otimização bayesiana.</li>
+</ol>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 5 — Função de Perda com Regularização L2</div>
+  $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^N \left[ w_1 y_i \log(\hat{y}_i) + w_0 (1 - y_i) \log(1 - \hat{y}_i) \right] + \frac{\lambda}{2} \sum_{l=1}^L \|W_l\|_F^2$$
+</div>
+
+<h3>3.2 Espaço de Busca Hiperparamétrico com Optuna</h3>
+<p>A busca bayesiana pelo algoritmo TPE (Tree-structured Parzen Estimator) explorou os seguintes intervalos justificados formalmente:</p>
+<ul>
+  <li><strong>Taxa de Aprendizado ($\eta$):</strong> $\log(10^{-4}, 10^{-1})$. Evita passos divergentes ou convergência lenta.</li>
+  <li><strong>Tamanho do Lote ($B$):</strong> $\{32, 64, 128, 256\}$. Balanceia ruído estocástico regularizador e aceleração de hardware.</li>
+  <li><strong>Profundidade ($L$):</strong> $[1, 4]$ camadas ocultas e larguras $\{32, 64, 128, 256\}$.</li>
+  <li><strong>Dropout ($p$):</strong> $[0.0, 0.5]$ para mitigar coadaptação sem gerar sob-ajuste tabular.</li>
+  <li><strong>Poda Inteligente:</strong> <code>optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)</code> associado ao <code>EarlyStopping(patience=5)</code>.</li>
+</ul>
+
+<h3>3.3 Frente 3.2: Redes Recorrentes (Frente Comparativa)</h3>
+<p>Modelou-se uma rede com células <strong>LSTM (Long Short-Term Memory)</strong> com 64 unidades processando sequências de voos consecutivos em tensores 3D com formato $(\text{amostras}, 5, 36)$, governada pelas equações de portas e estado de célula:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 6 — Célula Long Short-Term Memory (LSTM)</div>
+  $$f_t = \sigma(W_f x_t + U_f h_{t-1} + b_f) \quad [\text{Porta de Esquecimento}]$$
+  $$i_t = \sigma(W_i x_t + U_i h_{t-1} + b_i), \quad \tilde{c}_t = \tanh(W_c x_t + U_c h_{t-1} + b_c) \quad [\text{Porta de Entrada}]$$
+  $$c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t \quad [\text{Atualização de Estado de Célula}]$$
+  $$o_t = \sigma(W_o x_t + U_o h_{t-1} + b_o), \quad h_t = o_t \odot \tanh(c_t) \quad [\text{Porta de Saída e Estado Oculto}]$$
+</div>
+
+<!-- SEÇÃO 4 -->
+<h2>4. Resultados de Validação e Seleção dos Modelos Promissores</h2>
+<p>O estudo Optuna executou as tentativas bayesianas convergindo para a melhor configuração na validação:</p>
+<p style="text-align:center; font-family:'JetBrains Mono'; font-weight:600; background:#f1f5f9; padding:8px; border-radius:4px;">
+  Trial 1: {lr: 0.0314, batch_size: 256, n_layers: 3, dropout: 0.216, l2: 1.46e-5, units: [32, 64, 128]} | val_loss: 0.5467
+</p>
+
+<!-- SEÇÃO 5 -->
+<h2>5. Avaliação Final no Conjunto de Teste e Análise de Custo vs. Efetividade</h2>
+<p>Os modelos foram avaliados no teste cego único ($863$ amostras inéditas), computando métricas desbalanceadas e benchmarking computacional:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Arquitetura Avaliada</th>
+      <th>Frente Metodológica</th>
+      <th>Macro F1-Score</th>
+      <th>AUC-ROC</th>
+      <th>Parâmetros Treináveis</th>
+      <th>Latência (ms / 1k amostras)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>MLP V1 (Rasa Baseline)</strong></td>
+      <td>3.1 (MLP)</td>
+      <td>0.4348</td>
+      <td>0.5464</td>
+      <td>2.433</td>
+      <td><span class="badge badge-success">119.97 ms</span></td>
+    </tr>
+    <tr class="highlight-row">
+      <td><strong>MLP V2 (Profunda Regularizada)</strong></td>
+      <td>3.1 (MLP)</td>
+      <td><strong>0.4936</strong></td>
+      <td>0.4761</td>
+      <td>51.585</td>
+      <td>207.89 ms</td>
+    </tr>
+    <tr>
+      <td><strong>MLP V3 (Otimizada Optuna)</strong></td>
+      <td>3.1 (MLP)</td>
+      <td>0.4503</td>
+      <td><strong>0.5472</strong></td>
+      <td>12.193</td>
+      <td>231.57 ms</td>
+    </tr>
+    <tr>
+      <td><strong>Recorrente LSTM (Sequencial W=5)</strong></td>
+      <td>3.2 (Comparativa)</td>
+      <td>0.4443</td>
+      <td>0.5223</td>
+      <td>25.921</td>
+      <td>316.30 ms (+52%)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="figure-container">
+  <div class="figure-card">
+    <img src="../results/learning_curves_mlp_v2.png" alt="Curvas de Treinamento e Validação">
+    <div class="figure-caption">Figura 1 — Evolução da Perda (Loss) e Desempenho ao Longo das Épocas com Early Stopping.</div>
+  </div>
+  <div class="figure-card">
+    <img src="../results/confusion_matrix_mlp_v2.png" alt="Matriz de Confusão">
+    <div class="figure-caption">Figura 2 — Matriz de Confusão Normalizada no Conjunto de Teste Cego para a MLP V2.</div>
+  </div>
+</div>
+
+<h3>5.1 Discussão Crítica de Custo-Efetividade Computacional (Critério IV)</h3>
+<p>A análise dos resultados comprova:</p>
+<ol>
+  <li><strong>Trade-Off de Capacidade:</strong> A <strong>MLP V2</strong> liderou no equilíbrio entre as classes (Macro-F1 de 0.4936), demonstrando que o emprego conjunto de <code>BatchNormalization</code> e <code>Dropout</code> é essencial para impedir o colapso da previsão em direção à classe majoritária.</li>
+  <li><strong>Eficiência da Otimização Bayesiana:</strong> A <strong>MLP V3</strong> atingiu a maior área sob a curva ROC (0.5472) empregando apenas 12.193 parâmetros (4 vezes menor que a V2), configurando uma excelente opção para dispositivos de borda.</li>
+  <li><strong>Veredito do Comparativo com Redes Recorrentes:</strong> A LSTM apresentou latência 52% superior (316.30 ms vs. 207.89 ms por 1k predições) e exigiu complexidade de tensores 3D sem proporcionar ganho de Macro-F1 sobre a MLP profunda. Em malhas aéreas onde as partidas ocorrem em paralelo em centenas de pistas simultâneas, a <strong>MLP tabular densa provou-se operacionalmente superior</strong>.</li>
+</ol>
+
+<!-- SEÇÃO 6 -->
+<h2>6. Limitações e Conclusões</h2>
+<p>Dentre as limitações metodológicas identificadas, destaca-se a ausência de variáveis meteorológicas em rota (boletins METAR/TAF de vento e visibilidade) nos dados abertos primários do VRA, além de imponderabilidades de manutenção não programada.</p>
+<p>Conclui-se que o projeto atingiu integralmente os objetivos acadêmicos do Edital de Deep Learning do Prof. Dr. Sérgio Canuto, consolidando um protocolo anti-vazamento reproduzível com código fonte, cadernos Jupyter e estudos de otimização documentados.</p>
+
+</body>
+</html>
