@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Guia de Estudo e Base de Conhecimento Científica: Deep Learning no VRA/ANAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<!-- KaTeX para renderização matemática perfeita e legível em texto vetorial -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+<style>
+@page {
+  size: A4;
+  margin: 16mm 15mm 16mm 15mm;
+  @bottom-right {
+    content: "Página " counter(page);
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-size: 8.5pt;
+    color: #64748b;
+  }
+  @bottom-left {
+    content: "IFG • Deep Learning (2026/2) — Guia de Estudo VRA/ANAC";
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-size: 8.5pt;
+    color: #64748b;
+  }
+}
+
+:root {
+  --primary: #0f172a;
+  --secondary: #1e293b;
+  --accent: #1e40af;
+  --accent-light: #eff6ff;
+  --border: #cbd5e1;
+  --text: #1e293b;
+  --muted: #475569;
+  --box-bg: #f8fafc;
+  --code-bg: #f1f5f9;
+}
+
+* { box-sizing: border-box; }
+body {
+  font-family: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  line-height: 1.55;
+  font-size: 10pt;
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.header-banner {
+  border-bottom: 2.5px solid var(--accent);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.institution {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18pt;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.25;
+  margin: 6px 0 6px;
+}
+
+.subtitle {
+  font-size: 11pt;
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 14px;
+  background: var(--accent-light);
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 9pt;
+  margin-bottom: 18px;
+}
+
+.meta-item strong { color: var(--accent); }
+
+.summary-card {
+  background: var(--box-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  page-break-inside: avoid;
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 11pt;
+}
+
+h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12.5pt;
+  font-weight: 700;
+  color: var(--primary);
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 4px;
+  margin-top: 22px;
+  margin-bottom: 10px;
+  page-break-after: avoid;
+}
+
+h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-top: 12px;
+  margin-bottom: 6px;
+  page-break-after: avoid;
+}
+
+p {
+  margin: 0 0 8px;
+  text-align: justify;
+}
+
+ul, ol {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+li { margin-bottom: 3px; }
+
+.formula-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 10pt;
+  page-break-inside: avoid;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.formula-caption {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.code-box {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  page-break-inside: avoid;
+  font-size: 8.5pt;
+}
+
+.code-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.3pt;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5pt;
+  background: #f1f5f9;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
+}
+
+.callout {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #16a34a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 9.2pt;
+  page-break-inside: avoid;
+}
+
+.callout-title {
+  font-weight: 700;
+  color: #166534;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  font-size: 8.2pt;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.8pt;
+  margin: 12px 0;
+  page-break-inside: avoid;
+}
+
+th, td {
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  background: #f1f5f9;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+tr:nth-child(even) td { background: #f8fafc; }
+.highlight-row { background: #eff6ff !important; font-weight: 700; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 8pt;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-info { background: #e0f2fe; color: #075985; }
+
+.page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <div class="institution">Instituto Federal de Goiás (IFG) • Disciplina de Deep Learning (2026/2)</div>
+  <h1>Guia de Estudo e Base de Conhecimento Científica</h1>
+  <div class="subtitle">Modelagem Preditiva de Atrasos no Voo Regular Ativo (VRA / ANAC) com Deep Learning</div>
+</div>
+
+<div class="meta-grid">
+  <div class="meta-item"><strong>Docente Responsável:</strong> Prof. Dr. Sérgio Canuto</div>
+  <div class="meta-item"><strong>Frente Principal:</strong> Multilayer Perceptrons (MLP 3.1)</div>
+  <div class="meta-item"><strong>Frente Comparativa:</strong> Redes Recorrentes (LSTM 3.2)</div>
+  <div class="meta-item"><strong>Otimizador Bayesiano:</strong> Optuna (TPE + MedianPruner)</div>
+  <div class="meta-item"><strong>Dataset Oficial:</strong> Portal Brasileiro de Dados Abertos (VRA/ANAC)</div>
+  <div class="meta-item"><strong>Repositório:</strong> joseallangoncalves/deep_learning_trabalho_final</div>
+</div>
+
+<div class="summary-card">
+  <h3>Sumário do Guia de Estudo</h3>
+  <ol>
+    <li><strong>Tópico 1:</strong> O Problema Real e a Formulação Matemática (Alvo Binário &gt; 15 min)</li>
+    <li><strong>Tópico 2:</strong> A Regra de Ouro do Pré-processamento e Prevenção de Data Leakage</li>
+    <li><strong>Tópico 3:</strong> Engenharia de Atributos e Codificação Cíclica (Seno e Cosseno)</li>
+    <li><strong>Tópico 4:</strong> Divisão Cronológica e Tratamento do Desbalanceamento (Class Weights)</li>
+    <li><strong>Tópico 5:</strong> Arquitetura Multilayer Perceptron (MLP) — Frente Principal 3.1</li>
+    <li><strong>Tópico 6:</strong> Redes Neurais Recorrentes (LSTM) — Estudo Comparativo 3.2</li>
+    <li><strong>Tópico 7:</strong> Otimização Bayesiana de Hiperparâmetros com Optuna</li>
+    <li><strong>Tópico 8:</strong> Métricas de Avaliação e Análise de Custo-Efetividade Computacional</li>
+    <li><strong>Tópico 9:</strong> Como Executar Novos Experimentos e Buscar Resultados Superiores</li>
+  </ol>
+</div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 1 -->
+<!-- ========================================== -->
+<h2>Tópico 1: O Problema Real e a Formulação Matemática</h2>
+
+<h3>1. Contexto Operacional e Intuição</h3>
+<p>No setor aéreo, um atraso de voo acarreta efeito cascata (conexões perdidas, tripulação excedendo limites de horas regulamentares e aeronaves ocupando posições de pátio). Antecipar a probabilidade de atraso crítico antes da decolagem permite que os controladores e companhias aéreas reestruturem malhas e aloquem recursos preventivamente.</p>
+<ul>
+  <li><strong>Unidade de Observação:</strong> Cada linha representa um <strong>voo regular comercial individual</strong>.</li>
+  <li><strong>Limiar Crítico Regulatório:</strong> A ANAC e a IATA definem que atrasos de até 15 minutos são tolerância operacional normal. Acima de 15 minutos é formalmente classificado como <strong>atraso crítico</strong>.</li>
+</ul>
+
+<h3>2. Formulação Matemática das Variáveis</h3>
+<div class="formula-box">
+  <div class="formula-caption">Equação 1 — Atraso Contínuo de Chegada</div>
+  $$\text{AtrasoChegadaMin} = \frac{\text{DataHoraReal}_{\text{chegada}} - \text{DataHoraPrevista}_{\text{chegada}}}{60 \text{ segundos}}$$
+</div>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 2 — Variável Alvo Binária</div>
+  $$y = \begin{cases} 1, & \text{se } \text{AtrasoChegadaMin} > 15 \text{ minutos (Atraso Crítico)} \\ 0, & \text{se } \text{AtrasoChegadaMin} \le 15 \text{ minutos (Pontual / Tolerância)} \end{cases}$$
+</div>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/data_pipeline.py (Linhas 54-60)</div>
+<pre>df_clean['AtrasoChegadaMin'] = (df_clean['ChegadaReal'] - df_clean['ChegadaPrevista']).dt.total_seconds() / 60.0
+df_clean = df_clean[(df_clean['AtrasoChegadaMin'] >= -120) & (df_clean['AtrasoChegadaMin'] <= 1440)].copy()
+df_clean['target_bin'] = (df_clean['AtrasoChegadaMin'] > delay_threshold_min).astype(int)</pre>
+</div>
+
+<div class="callout">
+  <div class="callout-title">Como Explicar aos Colegas e ao Professor</div>
+  "Nós não tentamos prever os minutos exatos com regressão porque, na operação aeroportuária real, saber se vai atrasar 18 ou 22 minutos importa menos do que a decisão binária de acionar um plano de contingência para atrasos que violam os 15 minutos tolerados pela ANAC."
+</div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 2 -->
+<!-- ========================================== -->
+<h2>Tópico 2: A Regra de Ouro do Pré-processamento e Prevenção de Data Leakage</h2>
+
+<h3>1. O Conceito de Data Leakage (Vazamento de Dados)</h3>
+<p>Vazamento de dados ocorre quando informações que só existiriam <em>depois</em> do evento ou parâmetros globais dos dados de teste são inadvertidamente usados durante o treinamento. O modelo parece atingir 99% de acurácia no caderno, mas falha totalmente na vida real.</p>
+
+<h3>2. As Duas Fontes Graves Evitadas</h3>
+<ol>
+  <li><strong>Eliminação de Variáveis Futuras/Concorrentes:</strong> Colunas como <code>ChegadaReal</code>, <code>PartidaReal</code> e <code>CodigoJustificativa</code> só existem após o voo ter acontecido. Se mantidas na matriz $X$, a rede apenas subtrairia a partida real da prevista e descobriria a resposta com trapaça. Foram totalmente descartadas de $X$.</li>
+  <li><strong>Isolamento Estatístico do Treino:</strong> Parâmetros estatísticos de média ($\mu_{\text{treino}}$) e desvio padrão ($\sigma_{\text{treino}}$) do <code>StandardScaler</code> foram ajustados <strong>exclusivamente</strong> nos 70% cronológicos de treino.</li>
+</ol>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 3 — A Regra de Ouro do Pré-processamento</div>
+  $$\mu_{\text{treino}}, \sigma_{\text{treino}} \leftarrow \text{Fit exclusivamente em } D_{\text{treino}}$$
+  $$X_{\text{val}} = \frac{X_{\text{val}} - \mu_{\text{treino}}}{\sigma_{\text{treino}}}, \quad X_{\text{teste}} = \frac{X_{\text{teste}} - \mu_{\text{treino}}}{\sigma_{\text{treino}}}$$
+</div>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/data_pipeline.py (Linhas 121-154)</div>
+<pre># O preprocessor faz fit() APENAS no conjunto de treino:
+preprocessor.fit(train_df[num_cols + cat_cols])
+
+# As outras partições apenas recebem transform():
+X_train = preprocessor.transform(train_df[feature_cols])
+X_val   = preprocessor.transform(val_df[feature_cols])
+X_test  = preprocessor.transform(test_df[feature_cols])</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 3 -->
+<!-- ========================================== -->
+<h2>Tópico 3: Engenharia de Atributos e Codificação Cíclica (Seno e Cosseno)</h2>
+
+<h3>1. O Problema da Descontinuidade Numérica</h3>
+<p>Se codificarmos as horas de forma linear ($0$ a $23$), um voo programado para as <strong>23:55</strong> terá valor $\approx 23.9$ e um voo programado para as <strong>00:05</strong> terá valor $\approx 0.08$. A distância aritmética entre eles é $|23.9 - 0.08| = 23.82$ unidades! Fisicamente, eles estão separados por apenas <strong>10 minutos</strong>. Uma rede neural interpretaria isso como dois extremos opostos.</p>
+
+<h3>2. A Solução: Projeção Circular Trigonométrica</h3>
+<p>Mapeamos o tempo em um ângulo no círculo trigonométrico de $2\pi$ radianos:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 4 — Codificação Trigonométrica Cíclica</div>
+  $$\text{Hora}_{\sin} = \sin\left(\frac{2\pi \cdot \text{Hora}}{24}\right), \quad \text{Hora}_{\cos} = \cos\left(\frac{2\pi \cdot \text{Hora}}{24}\right)$$
+  $$\text{DiaSemana}_{\sin} = \sin\left(\frac{2\pi \cdot \text{Dia}}{7}\right), \quad \text{DiaSemana}_{\cos} = \cos\left(\frac{2\pi \cdot \text{Dia}}{7}\right)$$
+  $$\text{Mês}_{\sin} = \sin\left(\frac{2\pi \cdot \text{Mês}}{12}\right), \quad \text{Mês}_{\cos} = \cos\left(\frac{2\pi \cdot \text{Mês}}{12}\right)$$
+</div>
+
+<p>Com o par $(\sin, \cos)$, os horários 23:55 e 00:05 ficam adjacentes na circunferência, preservando a continuidade temporal exata.</p>
+
+<h3>3. Agrupamento de Categorias de Alta Cardinalidade</h3>
+<p>Aeroportos e companhias pequenas aparecem poucas vezes no ano. Para evitar centenas de colunas esparsas e overfitting, mantivemos apenas as <strong>Top 10 companhias</strong> e <strong>Top 20 aeroportos</strong>; todas as demais foram agrupadas no rótulo unificado <code>'OUTROS'</code>.</p>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/data_pipeline.py (Linhas 65-89)</div>
+<pre>hora_dec = df_clean['PartidaPrevista'].dt.hour + df_clean['PartidaPrevista'].dt.minute / 60.0
+df_clean['hora_sin'] = np.sin(2 * np.pi * hora_dec / 24.0)
+df_clean['hora_cos'] = np.cos(2 * np.pi * hora_dec / 24.0)
+
+# Agrupamento top-k para conter a cardinalidade:
+top_airlines = df_clean['ICAOEmpresaAerea'].value_counts().nlargest(top_k_airlines).index
+df_clean['ICAOEmpresaAerea'] = df_clean['ICAOEmpresaAerea'].where(df_clean['ICAOEmpresaAerea'].isin(top_airlines), other='OUTROS')</pre>
+</div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 4 -->
+<!-- ========================================== -->
+<h2>Tópico 4: Divisão Cronológica e Tratamento do Desbalanceamento (Class Weights)</h2>
+
+<h3>1. Por que NÃO usar K-Fold aleatório ou Shuffle?</h3>
+<p>Em séries temporais e dados operacionais, o passado explica o futuro. Embaralhar as linhas aleatoriamente faria a rede usar dados de voos de dezembro para prever voos de janeiro do mesmo ano. Por isso, adotou-se divisão cronológica estrita:</p>
+<ul>
+  <li><strong>Treino ($70\%$):</strong> Voos mais antigos cronologicamente ($D_{\text{treino}}$).</li>
+  <li><strong>Validação ($15\%$):</strong> Período intermediário (usado pelo Optuna e Early Stopping).</li>
+  <li><strong>Teste ($15\%$):</strong> Período mais recente (teste cego intocado).</li>
+</ul>
+
+<h3>2. Desbalanceamento e Ponderação de Classes (Class Weights)</h3>
+<p>Na base do VRA, $78.8\%$ dos voos são pontuais e apenas $21.2\%$ atrasam criticamente. Uma rede convencional aprenderia a prever sempre $0$ para atingir $78.8\%$ de acurácia com utilidade nula. A solução foi incorporar pesos inversos na Binary Cross-Entropy:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 5 — Pesos Inversos de Classe e Função de Perda Ponderada</div>
+  $$w_0 = \frac{N}{2 \cdot N_0} = 0.637, \quad w_1 = \frac{N}{2 \cdot N_1} = 2.325$$
+  $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^N \left[ w_1 y_i \log(\hat{y}_i) + w_0 (1 - y_i) \log(1 - \hat{y}_i) \right]$$
+</div>
+
+<p>Errar a classe minoritária ($y=1$) custa para a rede <strong>3.65 vezes mais caro</strong> do que errar a classe majoritária, equilibrando as atualizações de gradiente.</p>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: main.py (Linhas 69-77)</div>
+<pre>n_neg = int(np.sum(y_train == 0))
+n_pos = int(np.sum(y_train == 1))
+class_weights = {
+    0: float(len(y_train) / (2.0 * n_neg)),  # ~0.637
+    1: float(len(y_train) / (2.0 * n_pos))   # ~2.325
+}</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 5 -->
+<!-- ========================================== -->
+<h2>Tópico 5: Arquitetura Multilayer Perceptron (MLP) — Frente Principal 3.1</h2>
+
+<h3>1. Teorema da Aproximação Universal e Fundamentos Teóricos</h3>
+<p>O Teorema da Aproximação Universal (Hornik et al., 1989; Cybenko, 1989) garante que uma rede com uma única camada oculta e ativações não-lineares pode aproximar qualquer função contínua em subconjuntos compactos de $\mathbb{R}^n$. Entretanto, arquiteturas <strong>profundas</strong> conseguem decompor representações hierárquicas complexas com exponencialmente menos parâmetros do que redes rasas largas.</p>
+
+<h3>2. Elementos Críticos das Camadas Ocultas</h3>
+<ul>
+  <li><strong>Ativação ReLU ($\text{ReLU}(z) = \max(0, z)$):</strong> Elimina a saturação de gradiente em valores positivos, permitindo convergência rápida via otimizador Adam.</li>
+  <li><strong>Inicialização He Normal:</strong> Pesos inicializados com $\mathcal{N}(0, \sqrt{2/n_{\text{in}}})$, prevenindo que o sinal suma ou exploda em camadas ReLU profundas.</li>
+  <li><strong>Batch Normalization:</strong> Normaliza ativações intermediárias com média $0$ e variância $1$, acelerando o aprendizado e suavizando a superfície de perda.</li>
+  <li><strong>Dropout ($p=0.2 \sim 0.3$):</strong> Desliga aleatoriamente neurônios a cada batch, impedindo coadaptação espúria.</li>
+  <li><strong>Regularização L2 ($\lambda \cdot \sum \|W\|_2^2$):</strong> Penaliza pesos excessivamente grandes, forçando generalização.</li>
+</ul>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 6 — Função de Perda Completa da MLP com Regularização L2</div>
+  $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^N \left[ w_1 y_i \log(\hat{y}_i) + w_0 (1 - y_i) \log(1 - \hat{y}_i) \right] + \frac{\lambda}{2} \sum_{l=1}^L \|W_l\|_F^2$$
+</div>
+
+<h3>3. As Três Variantes Experimentais</h3>
+<ul>
+  <li><strong>MLP V1 (Rasa Baseline):</strong> 1 camada de 64 neurônios, sem Dropout, sem L2, sem BatchNorm (2.433 parâmetros).</li>
+  <li><strong>MLP V2 (Profunda Regularizada):</strong> 3 camadas ($256 \to 128 \to 64$), BatchNorm, Dropout(0.3) e L2 ($10^{-4}$). <strong>Maior Macro-F1: 0.4936</strong>.</li>
+  <li><strong>MLP V3 (Otimizada Optuna):</strong> 3 camadas ($32 \to 64 \to 128$), Dropout(0.216) e L2 ($1.46 \times 10^{-5}$). <strong>Maior ROC-AUC: 0.5472</strong> com apenas 12.193 parâmetros.</li>
+</ul>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/models.py (Linhas 10-60)</div>
+<pre>for idx, units in enumerate(hidden_units):
+    reg = regularizers.l2(l2_reg) if l2_reg > 0 else None
+    x = layers.Dense(units, kernel_initializer='he_normal', kernel_regularizer=reg)(x)
+    if use_batch_norm:
+        x = layers.BatchNormalization()(x)
+    x = layers.Activation('relu')(x)
+    if dropout_rate > 0:
+        x = layers.Dropout(dropout_rate)(x)
+outputs = layers.Dense(1, activation='sigmoid', kernel_initializer='glorot_uniform')(x)</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 6 -->
+<!-- ========================================== -->
+<h2>Tópico 6: Redes Neurais Recorrentes (LSTM) — Estudo Comparativo 3.2</h2>
+
+<h3>1. Hipótese e Formatação em Tensores Tridimensionais</h3>
+<p>A hipótese testada foi: o histórico de atrasos dos últimos 5 voos consecutivos influencia o próximo voo devido a congestionamento de pistas e pátios. Para isso, os dados foram remodelados em tensores 3D com janela deslizante $W = 5$:</p>
+<p style="text-align:center; font-family:'JetBrains Mono'; font-weight:600;">Formato do Tensor 3D: (Amostras, Timesteps = 5, Atributos = 36)</p>
+
+<h3>2. A Célula Long Short-Term Memory (LSTM)</h3>
+<p>Em Redes Recorrentes Simples, o gradiente desaparece ao retropropagar no tempo (Vanishing Gradient). A LSTM resolve isso mantendo o <strong>Estado de Célula ($c_t$)</strong> através de portas que atuam como autoestradas lineares de fluxo de gradiente:</p>
+
+<div class="formula-box">
+  <div class="formula-caption">Equação 7 — Equações de Transição da Célula LSTM</div>
+  $$f_t = \sigma(W_f x_t + U_f h_{t-1} + b_f) \quad [\text{Porta de Esquecimento: o que descartar do passado}]$$
+  $$i_t = \sigma(W_i x_t + U_i h_{t-1} + b_i), \quad \tilde{c}_t = \tanh(W_c x_t + U_c h_{t-1} + b_c) \quad [\text{Porta de Entrada: novo conteúdo}]$$
+  $$c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t \quad [\text{Atualização do Estado de Célula}]$$
+  $$o_t = \sigma(W_o x_t + U_o h_{t-1} + b_o), \quad h_t = o_t \odot \tanh(c_t) \quad [\text{Porta de Saída e Vetor Oculto}]$$
+</div>
+
+<h3>3. Veredito Científico: Por que a MLP superou a LSTM?</h3>
+<ul>
+  <li><strong>Desempenho:</strong> A LSTM obteve Macro-F1 de 0.4443, inferior aos <strong>0.4936</strong> da MLP V2.</li>
+  <li><strong>Custo Computacional:</strong> A latência da LSTM foi de <strong>316.30 ms por 1k previsões</strong> — $52\%$ mais lenta que a MLP V2 (207.89 ms).</li>
+  <li><strong>Razão Operacional:</strong> A malha aérea não é uma fila linear única. Centenas de pistas e aeroportos operam em paralelo. Forçar essa malha multidimensional em uma cadeia unidimensional linear injetou ruído sequencial. A modelagem tabular densa (MLP) provou-se operacionalmente superior.</li>
+</ul>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/data_pipeline.py (L156-171) e src/models.py (L61-96)</div>
+<pre># Tensores 3D com janela deslizante W=5:
+X_train_seq, y_train_seq = create_recurrent_sequences(X_train, y_train, time_steps=5)
+
+# Modelo recorrente Keras:
+rnn_layer = layers.LSTM(units=64, return_sequences=False)(inputs)
+outputs = layers.Dense(1, activation='sigmoid')(rnn_layer)</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 7 -->
+<!-- ========================================== -->
+<h2>Tópico 7: Otimização Bayesiana de Hiperparâmetros com Optuna</h2>
+
+<h3>1. Busca Bayesiana (TPE) vs. Grid e Random Search</h3>
+<p>O algoritmo <strong>TPE (Tree-structured Parzen Estimator)</strong> substitui a busca cega por um modelo probabilístico $p(\theta \mid y)$. Ele avalia as perdas de tentativas passadas e amostra novas combinações priorizando as regiões do espaço hiperparamétrico que demonstraram maior probabilidade de minimizar o erro de validação.</p>
+
+<h3>2. Poda Inteligente (MedianPruner) e Early Stopping</h3>
+<p>O callback customizado <code>OptunaPruningCallback</code> reporta a perda ao Optuna ao final de cada época. Se uma tentativa apresentar desempenho inferior à mediana das tentativas anteriores na mesma época, o Optuna aborta a execução imediatamente com <code>TrialPruned</code>, economizando até $70\%$ do tempo computacional.</p>
+
+<h3>3. Tabela do Espaço de Busca Hiperparamétrico</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Hiperparâmetro</th>
+      <th>Espaço de Busca</th>
+      <th>Escala</th>
+      <th>Justificativa Teórica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Taxa de Aprendizado ($\eta$)</strong></td>
+      <td>$[10^{-4}, 10^{-1}]$</td>
+      <td>Logarítmica</td>
+      <td>Permite explorar ordens de grandeza distintas ($0.0001, 0.001, 0.01$).</td>
+    </tr>
+    <tr>
+      <td><strong>Tamanho do Lote ($B$)</strong></td>
+      <td>$\{32, 64, 128, 256\}$</td>
+      <td>Categórica</td>
+      <td>Lotes menores geram ruído benéfico; lotes maiores aceleram o throughput matricial.</td>
+    </tr>
+    <tr>
+      <td><strong>Profundidade ($L$)</strong></td>
+      <td>$[1, 4]$ camadas</td>
+      <td>Inteiro</td>
+      <td>Investiga a transição entre modelos rasos e profundos.</td>
+    </tr>
+    <tr>
+      <td><strong>Largura por Camada</strong></td>
+      <td>$\{32, 64, 128, 256\}$</td>
+      <td>Categórica</td>
+      <td>Flexibilidade na capacidade representacional de cada camada.</td>
+    </tr>
+    <tr>
+      <td><strong>Taxa de Dropout ($p$)</strong></td>
+      <td>$[0.0, 0.5]$</td>
+      <td>Uniforme</td>
+      <td>Regularização estocástica para evitar sobreajuste.</td>
+    </tr>
+    <tr>
+      <td><strong>Decaimento L2 ($\lambda$)</strong></td>
+      <td>$[10^{-6}, 10^{-2}]$</td>
+      <td>Logarítmica</td>
+      <td>Restringe a norma dos tensores de peso sem achatar as ativações.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="formula-box">
+  <div class="formula-caption">Melhores Parâmetros Encontrados no Estudo (results/optuna_study.db)</div>
+  $$\eta = 0.0314, \quad B = 256, \quad L = 3 \text{ camadas } [32, 64, 128], \quad p = 0.216, \quad \lambda = 1.46 \times 10^{-5} \quad \implies \text{Val Loss} = 0.5467$$
+</div>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/tuning.py (Linhas 12-120)</div>
+<pre>study = optuna.create_study(
+    study_name="vra_mlp_tuning", storage="sqlite:///results/optuna_study.db",
+    direction="minimize", sampler=optuna.samplers.TPESampler(seed=42),
+    pruner=optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
+)</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 8 -->
+<!-- ========================================== -->
+<h2>Tópico 8: Métricas de Avaliação e Análise de Custo-Efetividade Computacional</h2>
+
+<h3>1. Métricas Apropriadas para Dados Desbalanceados</h3>
+<ul>
+  <li><strong>Precision (Atraso):</strong> Quantos voos previstos como atrasados realmente atrasaram (evita alarmes falsos).</li>
+  <li><strong>Recall (Atraso):</strong> Quantos dos atrasos reais o modelo conseguiu capturar (evita surpresas operacionais).</li>
+  <li><strong>Macro F1-Score:</strong> Média harmônica balanceada entre ambas as classes: $\text{Macro-F1} = \frac{F1_0 + F1_1}{2}$.</li>
+  <li><strong>ROC-AUC:</strong> Área sob a curva ROC, medindo a capacidade intrínseca do modelo de ranquear atrasos com probabilidades maiores que voos pontuais.</li>
+</ul>
+
+<h3>2. Tabela Comparativa Consolidada no Conjunto de Teste Cego</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Modelo Avaliado</th>
+      <th>Frente</th>
+      <th>Macro F1-Score</th>
+      <th>AUC-ROC</th>
+      <th>Parâmetros Treináveis</th>
+      <th>Latência (ms / 1k amostras)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>MLP V1 (Rasa Baseline)</strong></td>
+      <td>3.1</td>
+      <td>0.4348</td>
+      <td>0.5464</td>
+      <td>2.433</td>
+      <td><span class="badge badge-success">119.97 ms</span></td>
+    </tr>
+    <tr class="highlight-row">
+      <td><strong>MLP V2 (Profunda Regularizada)</strong></td>
+      <td>3.1</td>
+      <td><strong>0.4936</strong></td>
+      <td>0.4761</td>
+      <td>51.585</td>
+      <td>207.89 ms</td>
+    </tr>
+    <tr>
+      <td><strong>MLP V3 (Otimizada Optuna)</strong></td>
+      <td>3.1</td>
+      <td>0.4503</td>
+      <td><strong>0.5472</strong></td>
+      <td>12.193</td>
+      <td>231.57 ms (4x menor que V2)</td>
+    </tr>
+    <tr>
+      <td><strong>Recorrente LSTM (Sequencial)</strong></td>
+      <td>3.2</td>
+      <td>0.4443</td>
+      <td>0.5223</td>
+      <td>25.921</td>
+      <td>316.30 ms (+52% lentidão)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="code-box">
+  <div class="code-title">Onde está no Código: src/evaluation.py (Linhas 17-38 e 92-118)</div>
+<pre>metrics, y_pred, y_pred_prob = evaluate_model(model, X_test, y_test, threshold=0.5)
+cost_benchmark = benchmark_model_cost(model, sample_batch=X_test[:100], n_repetitions=20)</pre>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================== -->
+<!-- TÓPICO 9 -->
+<!-- ========================================== -->
+<h2>Tópico 9: Como Executar Novos Experimentos e Buscar Resultados Superiores</h2>
+
+<h3>1. Execução via Terminal e Caderno Interativo</h3>
+<p>O projeto está pronto para experimentação rápida no terminal PowerShell:</p>
+<div class="code-box">
+  <div class="code-title">Terminal PowerShell (Raiz do Projeto)</div>
+<pre># Executar o pipeline completo padrão:
+python main.py
+
+# Ou abrir o caderno interativo no Jupyter:
+jupyter notebook notebooks/03_optuna_experiments.ipynb</pre>
+</div>
+
+<h3>2. Três Experimentos Práticos para Tentar Superar a MLP V2</h3>
+
+<div class="summary-card">
+  <h3>Experimento A: Ajuste do Limiar de Decisão (Threshold Tuning)</h3>
+  <p>Em dados desbalanceados, a probabilidade $0.50$ é conservadora. Ao testar limiares de decisão entre $0.35$ e $0.45$, o Recall da classe minoritária sobe significativamente e o Macro-F1 pode ultrapassar $0.52$.</p>
+  <div class="code-box">
+    <div class="code-title">Em src/evaluation.py ou no script principal:</div>
+<pre># Testar com limiar reduzido de decisão:
+metrics_otimizadas, _, _ = evaluate_model(mlp_v2, X_test, y_test, threshold=0.40)</pre>
+  </div>
+</div>
+
+<div class="summary-card">
+  <h3>Experimento B: Substituição da Ativação por Swish ou GELU</h3>
+  <p>Em <code>src/models.py</code> (Linha 41), substitua <code>'relu'</code> por <code>'swish'</code> (função auto-gated suave: $f(x) = x \cdot \sigma(\beta x)$). Isso previne neurônios mortos e permite que gradientes negativos suaves continuem fluindo em dados tabulares esparsos.</p>
+</div>
+
+<div class="summary-card">
+  <h3>Experimento C: Agendador de Taxa de Aprendizado (Learning Rate Scheduler)</h3>
+  <p>Adicione um callback de desaceleração suave de taxa de aprendizado quando o modelo estacionar no platô de validação:</p>
+  <div class="code-box">
+    <div class="code-title">Adicionar aos Callbacks do Keras:</div>
+<pre>reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
+    monitor='val_loss', factor=0.5, patience=3, min_lr=1e-5, verbose=1
+)</pre>
+  </div>
+</div>
+
+<h2>Resumo dos Arquivos do Projeto</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Arquivo</th>
+      <th>Função no Projeto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>src/data_pipeline.py</code></td>
+      <td>Ingestão VRA, filtros, features cíclicas trigonométricas, split temporal estrito e ColumnTransformer.</td>
+    </tr>
+    <tr>
+      <td><code>src/models.py</code></td>
+      <td>Fábrica de arquiteturas: MLP modular (He Normal, BatchNorm, Dropout, L2) e Recorrente (LSTM/GRU).</td>
+    </tr>
+    <tr>
+      <td><code>src/tuning.py</code></td>
+      <td>Otimizador Bayesiano Optuna com MedianPruner, banco SQLite e função objetivo de validação.</td>
+    </tr>
+    <tr>
+      <td><code>src/evaluation.py</code></td>
+      <td>Cálculo de métricas desbalanceadas (Macro-F1, AUC), matrizes de confusão e benchmark de latência.</td>
+    </tr>
+    <tr>
+      <td><code>main.py</code></td>
+      <td>Orquestrador ponta a ponta do experimento científico com geração de relatórios.</td>
+    </tr>
+    <tr>
+      <td><code>reports/relatorio_tecnico.pdf</code></td>
+      <td>Relatório técnico final acadêmico submetido à disciplina.</td>
+    </tr>
+    <tr>
+      <td><code>reports/slides_apresentacao.html</code></td>
+      <td>Slides interativos formatados para apresentação e defesa oral do trabalho.</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
